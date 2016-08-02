@@ -18,6 +18,14 @@
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
+    <servlet>
+    <servlet-name>Test</servlet-name>
+    <jsp-file>/JSP/test.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Test</servlet-name>
+    <url-pattern>/test</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>LWR_REST</servlet-name>
     <url-pattern>/rest/*</url-pattern>
