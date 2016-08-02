@@ -22,6 +22,8 @@
 <script type="text/javascript" src="JS/schedule.js"></script>
 <script type="text/javascript" src="JS/angular.js"></script>
 <script type="text/javascript" src="JS/bootstrap.min.js"></script>
+<script type="text/javascript" src="JS/bootstrap-typeahead.js"></script>
+
 <link rel="shortcut icon" href="images/lwr_logo.png">
 </head>
 <body class="no-js">
@@ -31,8 +33,8 @@
 			<td width="5%">
 				<img src="/lwr/images/lwr_logo.png" alt="" height="60">
 			</td>
-			<td style="vertical-align:middle" width="92%">
-				<font size="6" color="black">Light Weight Reporter</font>
+			<td style="vertical-align:middle;padding-left:50px" width="92%">
+				<font size="6" color="white">Light Weight Reporter</font>
 			</td>
 			<%
 				Object loginName = request.getSession().getAttribute(DashboardConstants.SECURITY_CONTEXT);
@@ -116,6 +118,7 @@
 		<%		
 	}
 	%>
+	<input id="usernamehidden" type="hidden" name="<%=user.getUsername()%>" value="<%=user.getUsername()%>"></input>
 </ul>
 </div>
 </nav>

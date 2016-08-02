@@ -1,15 +1,24 @@
-body{
+body.lwr_main_body{
 	border: 1px solid #FFFFFF;
 	font-family:Arial,Verdana,sans-serif;
 	font-weight:normal;
 	font-size:12px;
 	background-image: url("/lwr/images/wall.jpg");
+	background-color:#679BB7;
 	background-size:100%;
+}
+table.login_table{
+	padding:20px;
+	color: #ffffff;
+	border: 1px solid black;
+	table-layout : fixed;
+	border-collapse: separate;
 }
 header{
 	width:100%;
 	border-collapse: collapse;:
 	border: 1px solid #000000;
+	background-color:#679BB7;
 }
 nav{
 	width:100%;
@@ -35,6 +44,7 @@ section{
 	background-color: #FFFFFF;
 	border-collapse: collapse;:
 	border: 1px solid #000000;
+	padding:5px;
 }
 
 footer{
@@ -223,13 +233,17 @@ a.homepagelinks:hover{
 	height:100%;
 }
 
+.alerttext{
+	color:black;
+	text-align:center;
+}
+
+div.topnav_adminpages{
+	max-height:30%;
+	overflow: auto;
+}
 
 /** bootstrap **/
-
-
-.panel-heading{
-	background-color:#679BB7;	
-}
 
 .nav-tabs > li > a:hover,.nav-tabs > li > a:focus,.nav-tabs > li > a:active{
   	background-color: #679BB7 !important;
@@ -246,10 +260,21 @@ a.homepagelinks:hover{
     color:#ffffff;
 }
 
+.dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus{
+	background: #679BB7 !important;
+    border: medium none;
+    border-radius: 0px;
+    color:#ffffff;
+}
+
 .dropdown{
 	margin-left:15px;
 }
 
 .caret{
 	margin-left:5px;
+}
+
+input{
+	margin:0px;
 }

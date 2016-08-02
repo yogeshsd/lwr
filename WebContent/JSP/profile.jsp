@@ -11,14 +11,10 @@
 <%@include file="header.jsp" %>
 <section>
 	<br>
-	<br>
-		<div class="panel panel-primary">
-			<div class="panel-heading" style="color:#679BB7">
-    		    <h6 class="panel-title" style="color:white">User Preferences</h6>
-    		</div>
+		<h4>User Preferences</h4>
 			<table style="width:50%">
 				<tr>
-					<td>
+					<td style="min-width:200px">
 						User Display Name
 					</td>
 					<td>
@@ -42,14 +38,11 @@
 					</td>
 				</tr>
 			</table>
-		</div>
-		<div class="panel panel-primary">
-			<div class="panel-heading" style="color:#679BB7">
-    		    <h4 class="panel-title" style="color:white">Report Preferences</h4>
-    		</div>
+		<hr>
+		<h4>Report Preferences</h4>			
 			<table style="width:50%">
 				<tr>
-					<td>
+					<td style="min-width:200px">
 						Chart Preference
 					</td>
 					<td>
@@ -79,43 +72,11 @@
 					</td>
 				</tr>
 			</table>
-		</div>
-
-		<div class="panel panel-primary">
-			<div class="panel-heading" style="color:#679BB7">
-    		    <h6 class="panel-title" style="color:white">Email Preferences</h6>
-    		</div>
-			<table style="width:50%">
-				<tr>
-					<td>
-						SMTP Server Name
-					</td>
-					<td>
-						<input name="smtphost" id="smtphost" type="text" value="<%=user.getRefreshInterval()%>"></input>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						SMTP Host Name
-					</td>
-					<td>
-						<input name="smtpport" id="smtpport" type="text" value="<%=user.getRefreshInterval()%>"></input>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Reciepents Address(s) ( Semicolon separate)
-					</td>
-					<td>
-						<input name="recptaddr" id="recptaddr" type="text" value="<%=user.getRefreshInterval()%>"></input>
-					</td>
-				</tr>
-			</table>
-		</div>
+		<hr>
 		<input name="password" id="password" type="hidden" value=<%=user.getPassword()%>></input>
 	<br>
-	<button type="button" onclick="saveProfile()">Submit</button>
-	<button type="reset">Reset</button>
-	<h4 id="savetext" align="center" style="color:blue"></h4>
+	<button type="button" onclick="saveProfile()" class="btn btn-primary" style="background:#679BB7">Submit</button>
+	<button type="reset" class="btn btn-primary" style="background:#679BB7">Reset</button>
+	<h5 id="savetext" class="alerttext"></h5>
 </section>
 <%@include file="footer.jsp" %>

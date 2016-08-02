@@ -21,9 +21,19 @@
 		StringBuffer jsonData = new StringBuffer();
 		JSONArray jsData=null;
 		String description="";
+		String reportName = name;
 		if(name!=null){
-			String path=DashboardConstants.PATH;
-			BufferedReader buffReader = new BufferedReader(new FileReader(path+File.separatorChar+"dashboard"+File.separatorChar+name));
+			String patterns[] = name.split(":");
+			String userName = DashboardConstants.PUBLIC_USER;
+			if(patterns.length==2){
+				userName = patterns[0];
+				reportName = patterns[1];
+			}
+			BufferedReader buffReader;
+			if(userName.equalsIgnoreCase(DashboardConstants.PUBLIC_USER))
+				buffReader = new BufferedReader(new FileReader(DashboardConstants.PUBLIC_REPORT_DIR+File.separatorChar+reportName));
+			else
+				buffReader = new BufferedReader(new FileReader(DashboardConstants.PRIVATE_REPORT_DIR+File.separatorChar+userName+File.separatorChar+reportName));
 			while(true){
 				String line = buffReader.readLine();
 				if(line == null)
@@ -33,7 +43,7 @@
 			System.out.println(jsonData.toString());
 			JSONParser parser = new JSONParser();
 			jsData = (JSONArray)parser.parse(jsonData.toString());
-			Report report = ReportManager.getReportManager().getReport(name);
+			Report report = ReportManager.getReportManager().getReport(reportName,userName);
 			description = report.getDescription();
 		}else{
 			name="";
@@ -139,7 +149,7 @@
 			}
 		%>
 		<br>
-		Report Name <input type="text" id="dashname" name="dash-name" value="<%=name%>"></input>
+		Report Name <input type="text" id="dashname" name="dash-name" value="<%=reportName%>"></input>
 		<hr>
 		Report Description <input type="text" id="description" name="description" value="<%=description %>"></input>
 		<hr>

@@ -19,14 +19,14 @@
 <script type="text/javascript" src="JS/bootstrap.min.js"></script>
 <link rel="shortcut icon" href="images/lwr_logo.png">
 </head>
-<body>
+<body class="lwr_main_body">
 <table>
 	<tr>
 		<td width="5%">
 			<img src="/lwr/images/lwr_logo.png" alt="" height="60">
 		</td>
-		<td style="vertical-align:middle" width="92%">
-			<font size="6" color="black">Light Weight Reporter</font>
+		<td style="vertical-align:middle;padding-left:50px" width="92%">
+			<font size="6" color="white">Light Weight Reporter</font>
 		</td>
 		<td width="3%" style="vertical-align:middle">
 		<%
@@ -46,34 +46,28 @@
 			<td>
 			</td>
 			<td>
-				<table>
+				<table class="login_table">
 					<tr>
-						<td>
-							<table style="padding:20px;color: #ffffff;border: 1px solid black;">
-								<tr>
-									<td style="color:black">User Name:</td>
-									<td><input id="username" name="username" type="text"></input></td>
-								</tr>
-								<tr>
-									<td style="color:black">Password:</td>
-									<td><input id="password" name="password" type="password"></input></td>
-								</tr>
-								<tr></tr>
-								<%
-								String errmsg = (String)request.getSession().getAttribute("errmsg");
-								if(errmsg == null || errmsg.isEmpty()){
-									%><tr></tr><%
-								}else{
-									%><tr><%=errmsg%></tr><%
-								}
-								%>
-								<tr></tr>
-								<tr>
-									<td><button name="login" type="submit">Login</button></td>
-									<td><button name="reset">Reset</button></td>
-								</tr>
-							</table>
-						</td>
+						<td style="color:black">User Name:</td>
+						<td><input id="username" name="username" type="text"></input></td>
+					</tr>
+					<tr>
+						<td style="color:black">Password:</td>
+						<td><input id="password" name="password" type="password"></input></td>
+					</tr>
+					<tr></tr>
+					<%
+					String errmsg = (String)request.getSession().getAttribute("errmsg");
+					if(errmsg == null || errmsg.isEmpty()){
+						%><tr></tr><%
+					}else{
+						%><tr><%=errmsg%></tr><%
+					}
+					%>
+					<tr></tr>
+					<tr>
+						<td><button name="login" type="submit">Login</button></td>
+						<td><button name="reset">Reset</button></td>
 					</tr>
 				</table>
 			</td>

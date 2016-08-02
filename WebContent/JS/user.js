@@ -83,7 +83,6 @@
 		var role = $("#role").val();
 		var chartType = $("#chartoption").val();
 		var refreshInterval = $("#refreshInterval").val();
-		alert(refreshInterval);
 		users["displayname"]=displayName;
 		users["username"]=username;
 		users["password"]=password;

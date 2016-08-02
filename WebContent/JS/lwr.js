@@ -66,7 +66,11 @@ function buildPage(json){
 	}
 }
 
-function save(){
+function save(mode){
+	var username = "public";
+	if(mode == "personal"){
+		username=$("#usernamehidden").val();
+	}
 	var dashname = $("#dashname").val();
 	var description = $("#description").val();
 	if(dashname !== ''){
@@ -110,13 +114,14 @@ function save(){
 		dashboard["description"]=description;
 		dashboard["maxrows"]=rowNumber;
 		dashboard["rows"]=rowsJson;
+		var reportName = username+":"+dashname;
 		var root=[];
 		root[0]=dashboard;
 		var request = $.ajax({
 			url: "/lwr/rest/reports/save",
 			type: "POST",
 			dataType: "html",
-			data: {"components":JSON.stringify(root),"dashboardname":dashname},
+			data: {"components":JSON.stringify(root),"dashboardname":reportName},
 			success: function(resp){
 					alert(resp+". Go to Home Page to view the report");	
 				},
@@ -171,9 +176,11 @@ function runQueryDash(innerRowIndex,rowIndex,columnIndex,dashBoardName){
 		});
 }
 
-function refreshElement(id,timeout,reportName,elementName,timeout){
+function refreshElement(id,reportName,elementName,timeout){
 	setInterval(function() {
-		$(id).html("Refresing....");
+		var height = $(id).height();
+		var width = $(id).width();
+		$(id).html("<table style=\"width:"+width+";height:"+height+";border:0px;vertical-align:center;text-align:center\"><tr><td style=\"vertical-align:middle;text-align:center\"><img src=\"/lwr/images/loading.gif\" style=\"width:75px;height:75px\"></img></td></tr></table>");
 		var request = $.ajax({
 			url: "/lwr/rest/reports/element",
 			type: "GET",
@@ -191,3 +198,23 @@ function refreshElement(id,timeout,reportName,elementName,timeout){
 	},timeout);
 }
 
+
+function loadElement(id,reportName,elementName){
+	var height = $(id).height();
+	var width = $(id).width();
+	$(id).html("<table style=\"width:"+width+";height:"+height+";border:0px;vertical-align:center;text-align:center\"><tr><td style=\"vertical-align:middle;text-align:center\"><img src=\"/lwr/images/loading.gif\" style=\"width:75px;height:75px\"></img></td></tr></table>");
+	var request = $.ajax({
+		url: "/lwr/rest/reports/element",
+		type: "GET",
+		data: {
+			"reportName":reportName,
+			"elementName":elementName,
+			"chartType":"html_jfree"},
+		success: function(resp) {
+				$(id).html(resp);
+			},
+		error: function(e,status,error){
+			    alert("Unable to query. Error "+error);
+			}
+	});
+}
