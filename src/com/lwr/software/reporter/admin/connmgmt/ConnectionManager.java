@@ -18,12 +18,12 @@ public class ConnectionManager {
 	
 	private Set<ConnectionParams> connParams = new HashSet<ConnectionParams>();
 	
-	private String connParamFileName = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"drivers.json";
-	
 	static{
-		File dir = new File(DashboardConstants.PATH+File.separatorChar+"dashboard");
-		dir.mkdirs();
+		File configDir = new File(DashboardConstants.CONFIG_PATH);
+		configDir.mkdirs();
 	}
+	
+	private String fileName = DashboardConstants.CONFIG_PATH+"drivers.json";
 	
 	public static ConnectionManager getConnectionManager(){
 		if(manager == null){
@@ -45,7 +45,7 @@ public class ConnectionManager {
 	    	ObjectMapper objectMapper = new ObjectMapper();
 	        TypeFactory typeFactory = objectMapper.getTypeFactory();
 	        CollectionType collectionType = typeFactory.constructCollectionType(Set.class, ConnectionParams.class);
-	        connParams =  objectMapper.readValue(new File(connParamFileName), collectionType);
+	        connParams =  objectMapper.readValue(new File(fileName), collectionType);
 	        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(connParams));
 	    } catch (IOException e) {
 	        e.printStackTrace();
@@ -99,7 +99,7 @@ public class ConnectionManager {
 		try{
 	    	ObjectMapper objectMapper = new ObjectMapper();
 	        String dataToRight = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(connParams);
-	        FileWriter writer = new FileWriter(connParamFileName);
+	        FileWriter writer = new FileWriter(fileName);
 	        writer.write(dataToRight);
 	        writer.flush();
 	        writer.close();

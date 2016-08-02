@@ -2,7 +2,6 @@ package com.lwr.software.reporter.admin.schedmgmt;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,13 +16,13 @@ public class ScheduleManager {
 	private static volatile ScheduleManager manager;
 	
 	private Set<Schedule> schedules = new HashSet<Schedule>();
-
-	private String fileName = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"schedules.json";
 	
 	static{
-		File dir = new File(DashboardConstants.PATH+File.separatorChar+"dashboard");
-		dir.mkdirs();
+		File configDir = new File(DashboardConstants.CONFIG_PATH);
+		configDir.mkdirs();
 	}
+	
+	private String fileName = DashboardConstants.CONFIG_PATH+"schedules.json";
 	
 	public static ScheduleManager getScheduleManager(){
 		if(manager == null){
@@ -44,10 +43,10 @@ public class ScheduleManager {
 	    try {
 	    	ObjectMapper objectMapper = new ObjectMapper();
 	        TypeFactory typeFactory = objectMapper.getTypeFactory();
-	        CollectionType collectionType = typeFactory.constructCollectionType(Set.class, ScheduleManager.class);
+	        CollectionType collectionType = typeFactory.constructCollectionType(Set.class, Schedule.class);
 	        schedules =  objectMapper.readValue(new File(fileName), collectionType);
 	        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(schedules));
-	    } catch (IOException e) {
+	    } catch (Throwable e) {
 	        e.printStackTrace();
 	    }
 	}
@@ -60,12 +59,13 @@ public class ScheduleManager {
 		}else{
 			schedules.add(schedule);
 		}
+		serialize();
 		return isSaved;
 	}
 	
 	public Schedule getSchedule(String name){
 		for (Schedule schedule : schedules) {
-			if(schedule.getName().equalsIgnoreCase(name))
+			if(schedule.getScheduleName().equalsIgnoreCase(name))
 				return schedule;
 		}
 		return null;
@@ -74,7 +74,7 @@ public class ScheduleManager {
 	public boolean removeSchedule(String name){
 		boolean toReturn = false;
 		for (Schedule schedule : schedules) {
-			if(schedule.getName().equalsIgnoreCase(name)){
+			if(schedule.getScheduleName().equalsIgnoreCase(name)){
 				toReturn = schedules.remove(schedule);
 				break;
 			}

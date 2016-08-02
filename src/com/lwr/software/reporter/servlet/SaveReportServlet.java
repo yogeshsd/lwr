@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.lwr.software.reporter.DashboardConstants;
 import com.lwr.software.reporter.admin.usermgmt.User;
 import com.lwr.software.reporter.admin.usermgmt.UserManager;
+import com.lwr.software.reporter.renderer.report.HTMLReportRenderer;
 import com.lwr.software.reporter.renderer.report.IReportRenderer;
 import com.lwr.software.reporter.renderer.report.ReportRendererFactory;
 import com.lwr.software.reporter.security.UserSecurityContext;
@@ -42,6 +43,7 @@ public class SaveReportServlet extends HttpServlet {
 			renderer.render(stream);
 		}else if(type.equalsIgnoreCase(DashboardConstants.HTML)){
 			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(DashboardConstants.HTML, reportName,chartType);
+			((HTMLReportRenderer)renderer).setLoadData(true);
 	        response.setContentType("application/octet-stream");
 	        response.setHeader("Content-Disposition","attachment;filename="+reportName+".html");
 			renderer.render(stream);

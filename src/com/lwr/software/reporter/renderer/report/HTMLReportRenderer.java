@@ -14,12 +14,18 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
 	
 	private long refreshInterval = DashboardConstants.DEFAULT_REFRESH_INTERVAL_MILLIS;
 	
+	private boolean loadData = false;
+	
 	public HTMLReportRenderer(String reportName) {
 		super(reportName);
 	}
 	
 	public void setRefreshInterval(long refreshInterval) {
 		this.refreshInterval = refreshInterval;
+	}
+	
+	public void setLoadData(boolean loadData) {
+		this.loadData = loadData;
 	}
 	
 	@Override
@@ -70,11 +76,15 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
 				html.append("<tr>");
 				html.append("<th>\n");
 				html.append(element.getTitle());
-				html.append("<img align=\"right\" src=\"/lwr/images/show-data.png\" onclick=\"runQueryDash(" + rowIndex	+ "," + rowNumber + "," + colIndex + ",'" + reportName + "')\"></img>");
+				html.append("<img align=\"right\" src=\"/lwr/images/show-data.png\" onclick=\"runQueryDash(" + rowIndex	+ "," + rowNumber + "," + colIndex + ",'" + userName+":"+reportName + "')\"></img>");
 				html.append("</th>");
 				html.append("</tr><td>");
-				html.append("<div id=\"pos_" + element.getPosition() + "\" onclick=\"refreshElement(this,5000,'"+reportName+"','"+element.getTitle()+"',"+refreshInterval+")\">\n");
-				html.append(buildElement(element));
+				String divId = "pos_"+element.getPosition();
+				html.append("<div id=\""+divId+"\" onclick=\"refreshElement(this,'"+userName+":"+reportName+"','"+element.getTitle()+"',"+refreshInterval+")\">\n");
+				if(loadData)
+					html.append(buildElement(element));
+				else
+					html.append("<script>$("+divId+").load(loadElement("+divId+",'"+userName+":"+reportName+"','"+element.getTitle()+"'))</script>");
 				html.append("</div>\n");
 				html.append("</td>");
 				html.append("</tr>");

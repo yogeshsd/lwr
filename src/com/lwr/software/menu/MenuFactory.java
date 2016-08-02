@@ -1,9 +1,7 @@
 package com.lwr.software.menu;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.lwr.software.reporter.DashboardConstants;
@@ -73,6 +71,7 @@ public class MenuFactory {
 
 		MenuItem fileMenu = new MenuItem("File","#");
 		fileMenu.addRole(Role.ADMIN);
+		fileMenu.addRole(Role.VIEW);
 		fileMenu.addPage(DashboardConstants.ALL_PAGES);
 		
 		MenuItem newMenu = new MenuItem("New Report","/lwr/createedit");
@@ -85,9 +84,14 @@ public class MenuFactory {
 		newMenu.addPage("/lwr/connmgmt");
 
 		
-		MenuItem saveMenu = new MenuItem("Save Report","javascript:save()");
+		MenuItem saveMenu = new MenuItem("Save - Public Folder","javascript:save('public')");
 		saveMenu.addRole(Role.ADMIN);
 		saveMenu.addPage("/lwr/createedit");
+		
+		MenuItem saveMenuPrivate = new MenuItem("Save - Private Folder","javascript:save('personal')");
+		saveMenuPrivate.addRole(Role.ADMIN);
+		saveMenuPrivate.addPage("/lwr/createedit");
+
 		
 		MenuItem editMenu = new MenuItem("Edit Report","/lwr/createedit");
 		editMenu.setUseReportParam(true);
@@ -96,6 +100,7 @@ public class MenuFactory {
 		
 		fileMenu.addSubMenuItem(newMenu);
 		fileMenu.addSubMenuItem(saveMenu);
+		fileMenu.addSubMenuItem(saveMenuPrivate);
 		fileMenu.addSubMenuItem(editMenu);
 
 		

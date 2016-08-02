@@ -3,11 +3,8 @@ package com.lwr.software.reporter.reportmgmt;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,12 +19,10 @@ public class ReportManager {
 	
 	private static ReportManager manager;
 	
-	private String reportsDir = DashboardConstants.PATH+File.separatorChar+"dashboard";
-	
-	private Map<String,Report> reportMap = new LinkedHashMap<String,Report>();
+	private Map<String,Map<String,Report>> userReportMap = new LinkedHashMap<String,Map<String,Report>>();
 
 	static{
-		File dir = new File(DashboardConstants.PATH+File.separatorChar+"dashboard");
+		File dir = new File(DashboardConstants.PUBLIC_REPORT_DIR);
 		dir.mkdirs();
 	}
 	
@@ -43,14 +38,20 @@ public class ReportManager {
 	}
 	
 	private ReportManager(){
-		init();
+		init(DashboardConstants.PUBLIC_USER);
 	}
 
-	private void init() {
-		File dir = new File(reportsDir);
+	private void init(String userName) {
+		String dirName = DashboardConstants.PUBLIC_REPORT_DIR;
+		if(!userName.equalsIgnoreCase(DashboardConstants.PUBLIC_USER))
+			dirName = DashboardConstants.PRIVATE_REPORT_DIR+userName;
+		Map<String,Report> reportMap = new LinkedHashMap<String,Report>();
+		File dir = new File(dirName);
+		dir.mkdirs();
 		String reportFiles[] = dir.list();
 		for(String reportFile : reportFiles){
-			if(reportFile.equals("drivers.json") || reportFile.equals("users.json"))
+			File f = new File(reportFile);
+			if(f.isDirectory())
 				continue;
 		    try {
 		    	ObjectMapper objectMapper = new ObjectMapper();
@@ -58,7 +59,6 @@ public class ReportManager {
 		        CollectionType collectionType = typeFactory.constructCollectionType(Set.class, Report.class);
 		        Set<Report> reports =  objectMapper.readValue(new File(dir.getAbsolutePath()+File.separatorChar+reportFile), collectionType);
 		        for (Report report : reports) {
-		        	System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(report));
 		        	int maxRows = report.getmaxrows();
 		        	List<RowElement> rowElements = report.getRows();
 		        	for (RowElement rowElement : rowElements) {
@@ -77,13 +77,17 @@ public class ReportManager {
 		        e.printStackTrace();
 		    }
 		}
+		userReportMap.put(userName, reportMap);
 	}
 
-	public Report getReport(String reportTitle) {
-		return reportMap.get(reportTitle);
+	public Report getReport(String reportTitle,String userName) {
+		Map<String, Report> map = userReportMap.get(userName);
+		if(map == null || map.isEmpty())
+			return null;
+		return map.get(reportTitle);
 	}
 
-	private boolean serializeReport(String components,String dashboardname){
+	private boolean serializeReport(String components,String dashboardname,String userName){
 		try{
 	    	ObjectMapper objectMapper = new ObjectMapper();
 	    	TypeFactory typeFactory = objectMapper.getTypeFactory();
@@ -102,10 +106,19 @@ public class ReportManager {
 						element.setMaxRow(maxRows);
 					}
 				}
-				reportMap.put(report.getTitle(), report);
+	        	Map<String, Report> map = userReportMap.get(userName);
+	        	if(map == null || map.isEmpty()){
+	        		map = new LinkedHashMap<String,Report>();
+	        		userReportMap.put(userName, map);
+	        	}
+				map.put(report.getTitle(), report);
 	    	}
 	        String dataToRight = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(reports);
-	        FileWriter writer = new FileWriter(reportsDir+File.separatorChar+dashboardname);
+	        FileWriter writer = null;
+	        if(userName.equalsIgnoreCase(DashboardConstants.PUBLIC_USER))
+	        	writer = new FileWriter(DashboardConstants.PUBLIC_REPORT_DIR+dashboardname);
+	        else
+	        	writer = new FileWriter(DashboardConstants.PRIVATE_REPORT_DIR+File.separatorChar+userName+File.separatorChar+dashboardname);
 	        writer.write(dataToRight);
 	        writer.flush();
 	        writer.close();
@@ -116,20 +129,38 @@ public class ReportManager {
 		}
 	}
 	
-	public boolean saveReport(String components,String dashboardname) {
-		return serializeReport(components,dashboardname);
+	public boolean saveReport(String components,String dashboardname,String userName) {
+		return serializeReport(components,dashboardname,userName);
 	}
 
-	public Set<Report> getReports() {
-		Set<Report> reps = new LinkedHashSet<Report>();
-		Collection<Report> reports = this.reportMap.values();
-		for (Report report : reports) {
-			reps.add(report);
-		}
+	public Map<String,Map<String,Report>> getReports(String userName) {
+		Map<String,Map<String,Report>> reps = new HashMap<String,Map<String,Report>>();
+		if(userName==null)
+			return reps;
+		Map<String, Report> privateReports = userReportMap.get(userName);
+		if(privateReports != null)
+			reps.put(userName,privateReports);
+		
+		Map<String, Report> publicReports = userReportMap.get(DashboardConstants.PUBLIC_USER);
+		if(publicReports != null )
+			reps.put(DashboardConstants.PUBLIC_USER,publicReports);
+		
 		return reps;
 	}
 	
 	public void reload(){
-		init();
+		init(DashboardConstants.PUBLIC_REPORT_DIR);
+		Set<String> userNames = userReportMap.keySet();
+		if(userNames == null || userNames.isEmpty())
+			return;
+		for (String userName : userNames) {
+			if(userName.equalsIgnoreCase(DashboardConstants.PUBLIC_USER))
+				continue;
+			init(userName);
+		}
+	}
+	
+	public void reload(String userName){
+		init(userName);
 	}
 }

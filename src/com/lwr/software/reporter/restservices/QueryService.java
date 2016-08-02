@@ -37,12 +37,19 @@ public class QueryService {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String executeQuery(
-			@QueryParam("reportName") String reportName,
+			@QueryParam("reportName") String rName,
 			@QueryParam("rowIndex") Integer rowIndex,
 			@QueryParam("innerRowIndex") Integer innerRowIndex,
 			@QueryParam("columnIndex") Integer columnIndex
 			){
-		Report report = ReportManager.getReportManager().getReport(reportName);
+		String patterns[] = rName.split(":");
+		String userName = DashboardConstants.PUBLIC_USER;
+		String reportName = rName;
+		if(patterns.length==2){
+			userName = patterns[0];
+			reportName = patterns[1];
+		}
+		Report report = ReportManager.getReportManager().getReport(reportName,userName);
 		List<RowElement> reportElements = report.getRows();
 		for (RowElement rowElement : reportElements) {
 			List<Element> elements = rowElement.getElements();

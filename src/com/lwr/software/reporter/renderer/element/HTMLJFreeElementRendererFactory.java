@@ -17,8 +17,6 @@ public class HTMLJFreeElementRendererFactory implements IELementRendererFactory 
 		String type = element.getChartType();
 		if(type==null)
 			return null;
-		if(element.getData() == null || element.getData().isEmpty())
-			return null;
 		if (type.equals(DashboardConstants.PIE_CHART_TYPE)) {
 			return new HTMLJFreePieChart(element);
 		} else if (type.equals(DashboardConstants.LINE_CHART_TYPE)) {

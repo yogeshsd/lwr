@@ -19,12 +19,12 @@ public class UserManager {
 	
 	private Set<User> users = new HashSet<User>();
 	
-	private String fileName = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"users.json";
-	
 	static{
-		File dir = new File(DashboardConstants.PATH+File.separatorChar+"dashboard");
-		dir.mkdirs();
+		File configDir = new File(DashboardConstants.CONFIG_PATH);
+		configDir.mkdirs();
 	}
+	
+	private String fileName = DashboardConstants.CONFIG_PATH+"users.json";
 	
 	public static UserManager getUserManager(){
 		if(manager == null){

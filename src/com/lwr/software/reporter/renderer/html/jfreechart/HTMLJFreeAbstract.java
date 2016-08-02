@@ -34,6 +34,11 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 	
 	protected Map<Integer,String> headerIndexToTypeMap = new HashMap<Integer,String>();
 	
+	static{
+		File tempDir = new File(DashboardConstants.TEMP_PATH);
+		tempDir.mkdirs();
+	}
+	
 	public HTMLJFreeAbstract(Element element){
 		this.element=element;
 		initHeaderLookup();
@@ -85,7 +90,7 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 			return null;
 		String rowLabel = element.getHeader().get(0).toString();
 		String columnLabel = element.getHeader().get(1).toString();
-		String fileName = element.getId()+element.getChartType()+".jpeg";
+		String fileName = DashboardConstants.TEMP_PATH+element.getId()+element.getChartType()+".jpeg";
 		JFreeChart chart = HTMLJFreeChartFactory.getChart(this.element.getChartType(), rowLabel, columnLabel, dataset);
 		try {
 			File file = new File(fileName);

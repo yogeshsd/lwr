@@ -5,6 +5,10 @@ import java.io.File;
 public interface DashboardConstants {
 
 	public static final String PATH=".";
+	public static final String PRIVATE_REPORT_DIR = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"reports"+File.separatorChar+"private"+File.separatorChar;
+	public static final String PUBLIC_REPORT_DIR = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"reports"+File.separatorChar+"public"+File.separatorChar;
+	public static final String CONFIG_PATH = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"config"+File.separatorChar;
+	public static final String TEMP_PATH = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"temp"+File.separatorChar;
 	public static final String PRODUCT_NAME="Light Weight Reporter";
 	public static final String PIE_CHART_TYPE = "pie";
 	public static final String BAR_CHART_TYPE = "bar";
@@ -36,9 +40,10 @@ public interface DashboardConstants {
 	public static final String HTML = "html";
 	public static final long DEFAULT_REFRESH_INTERVAL_MILLIS = 300000;
 	public static final Integer MAX_CONNECTIONS = 2;
-	public static enum Destination  {EMAIL,FTP};
+	public static final String PUBLIC_USER = "public";
+	public static enum Destination  {EMAIL,INBOX};
 	public static enum OutputFormat  {HTML,PDF,CSV};
 	public static enum Role {	ADMIN,	VIEW, GUEST, ALL };
 	public static enum Status { SUCCESS,ERROR,RUNNING, UNKNOWN};
-	public static enum Frequency { HOURLY,DAILY,WEEKLY, MONTHLY};
+	public static enum Recurrence { HOURLY,DAILY,MONTHLY};
 }

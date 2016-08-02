@@ -1,6 +1,9 @@
 package com.lwr.software.reporter.restservices;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -12,8 +15,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.lwr.software.reporter.DashboardConstants;
-import com.lwr.software.reporter.DashboardConstants.OutputFormat;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.CollectionType;
+import org.codehaus.jackson.map.type.TypeFactory;
+
 import com.lwr.software.reporter.admin.schedmgmt.Schedule;
 import com.lwr.software.reporter.admin.schedmgmt.ScheduleList;
 import com.lwr.software.reporter.admin.schedmgmt.ScheduleManager;
@@ -53,18 +58,26 @@ public class ScheduleManagementService {
 	
 	@Path("/save")
 	@POST
-	public Response updateSchedule(
-			@QueryParam("schedulename") String scheduleName,
-			@QueryParam("reportname") String reportName,
-			@QueryParam("format") DashboardConstants.OutputFormat outputFormat,
-			@QueryParam("destination") DashboardConstants.Destination destination,
-			@QueryParam("frequency") DashboardConstants.Frequency frequency,
-			@QueryParam("interval") Long interval){
-		Schedule schedule = new Schedule(scheduleName,reportName,outputFormat,destination,frequency,interval);
-		boolean status = ScheduleManager.getScheduleManager().saveSchedule(schedule);
-		if(status)
-			return Response.ok("Schedule '"+scheduleName+"' Saved.").build();
-		else
-			return Response.serverError().entity("Unable to save schedule '"+scheduleName+"'.").build();
+	public Response updateSchedule(@QueryParam("schedules") String schedules){
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
+    	TypeFactory typeFactory = objectMapper.getTypeFactory();
+    	CollectionType collectionType = typeFactory.constructCollectionType(Set.class, Schedule.class);
+    	try {
+			Set<Schedule> scheds =  objectMapper.readValue(schedules, collectionType);
+			Iterator<Schedule> iterator = scheds.iterator();
+			while(iterator.hasNext()){
+				Schedule schedule = iterator.next();
+				boolean status = ScheduleManager.getScheduleManager().saveSchedule(schedule);
+				if(status)
+					return Response.ok("Schedule '"+schedule.getScheduleName()+"' Saved.").build();
+				else
+					return Response.serverError().entity("Unable to save schedule '"+schedule.getScheduleName()+"'.").build();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Response.serverError().entity("Unable to save schedule."+e.getMessage()).build();
+		}
+    	return Response.serverError().entity("Unable to save schedule.").build();
 	}
 }

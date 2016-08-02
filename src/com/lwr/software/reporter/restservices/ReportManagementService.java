@@ -1,6 +1,9 @@
 package com.lwr.software.reporter.restservices;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -22,14 +25,40 @@ import com.lwr.software.reporter.reportmgmt.RowElement;
 
 @Path("/reports/")
 public class ReportManagementService {
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getReportNames(
+			@QueryParam("userName") String userName
+			){
+		Map<String,Map<String,Report>> userToReport = ReportManager.getReportManager().getReports(userName);
+		Set<String> keys = userToReport.keySet();
+		StringBuilder builder = new StringBuilder("[");
+		for (String key : keys) {
+			Map<String, Report> value = userToReport.get(key);
+			Collection<Report> reps = value.values();
+			for (Report report : reps) 
+				builder.append("\""+report.getTitle()+"\",");
+		}
+		String stringToReturn = builder.substring(0, builder.length()-1);
+		stringToReturn=stringToReturn+"]";
+		return builder.toString();
+	}
 
 	@Path("/save")
 	@POST
 	public Response saveReport(
 			@FormParam("components") String components,
-			@FormParam("dashboardname") String dashboardname)
+			@FormParam("dashboardname") String rName)
 	{
-			boolean status = ReportManager.getReportManager().saveReport(components,dashboardname);
+			String patterns[] = rName.split(":");
+			String userName = DashboardConstants.PUBLIC_USER;
+			String reportName = rName;
+			if(patterns.length==2){
+				userName = patterns[0];
+				reportName = patterns[1];
+			}
+			boolean status = ReportManager.getReportManager().saveReport(components,reportName,userName);
 			if(status)
 				return Response.ok("Report Saved.").build();
 			else
@@ -40,11 +69,18 @@ public class ReportManagementService {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String executeQuery(
-			@QueryParam("reportName") String reportName,
+			@QueryParam("reportName") String rName,
 			@QueryParam("elementName") String elementName,
 			@QueryParam("renderType") String renderType
 			){
-		Report report = ReportManager.getReportManager().getReport(reportName);
+		String patterns[] = rName.split(":");
+		String userName = DashboardConstants.PUBLIC_USER;
+		String reportName = rName;
+		if(patterns.length==2){
+			userName = patterns[0];
+			reportName = patterns[1];
+		}
+		Report report = ReportManager.getReportManager().getReport(reportName,userName);
 		System.out.println("Report Name = "+reportName+", Element Name = "+elementName);
 		List<RowElement> reportElements = report.getRows();
 		for (RowElement rowElement : reportElements) {
