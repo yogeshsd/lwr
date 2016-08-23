@@ -15,20 +15,28 @@
     pageEncoding="ISO-8859-1"%>
 <%@include file="../JSP/header.jsp" %>
 <script type="text/javascript">
-  $(document).ready(function() {
-    $('input.typeahead').typeahead({
-      source: function (query, process) {
-        $.ajax({
-          url: '/lwr/rest/reports',
-          type: 'GET',
-          dataType: 'JSON',
-          success: function(data) {
-            process(data);
-          }
-        });
-      }
-    });
-  });
+	$(document).ready(function() {
+	  $('input.typeahead').typeahead({
+	    source: function (query, process) {
+		var username = "public";
+		username=$("#usernamehidden").val();
+			$.ajax({
+			  url: '/lwr/rest/reports',
+			  type: 'GET',
+			  dataType: 'JSON',
+			  data: {"userName":username},
+			  success: function(data) {
+					var htmlData=[];
+					for (i = 0; i < data.length; i++) { 
+						var report = JSON.parse(data[i]);
+						htmlData[i]=report.title;
+					}
+					process(htmlData);
+			  }
+			});
+		 }
+	  });
+	});
 </script>
 <section>
 	<div class="topnav_adminpages">
@@ -202,16 +210,6 @@
 					<td>Receivers Email Address(s)</td>
 					<td>
 						<input name="receiveremail" id="receiveremail" type="text"></input>
-					</td>
-				</tr>
-			</table>
-		</div>
-		<div id="inboxconfig" style="display:none">
-			<table style="width:50%" class="admincellinputtable">
-				<tr>
-					<td style="min-width:200px">Folder Name</td>
-					<td>
-						<input name="foldername" id="foldername" type="text"></input>
 					</td>
 				</tr>
 			</table>
