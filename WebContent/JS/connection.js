@@ -65,7 +65,8 @@
 			alert("Driver cannot be null!");
 		}else if (url ==''){
 			alert("url cannot be null!");
-		}else{			
+		}else{
+			$("#savetext").html("<img src=\"/lwr/images/loading.gif\" style=\"width:75px;height:75px\"></img>");
 			var request = $.ajax({
 				url: "http://localhost:8080/lwr/rest/connections/test?username="+username+"&password="+password+"&alias="+alias+"&url="+url+"&isdefault="+isdefault+"&driver="+driver,
 				type: "POST",
@@ -79,7 +80,7 @@
 							var row = $("#"+alias+"_conn");
 							var img = "<span class=\"label label-danger\">Failed</span>";
 							row.html(img);
-							$("#savetext").html(e.responseText);
+							$("#savetext").html("<h6>"+e.responseText+"</h6>");
 					}
 				});
 		}

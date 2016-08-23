@@ -26,7 +26,7 @@
 			<img src="/lwr/images/lwr_logo.png" alt="" height="60">
 		</td>
 		<td style="vertical-align:middle;padding-left:50px" width="92%">
-			<font size="6" color="white">Light Weight Reporter</font>
+			<font size="6" color="white"><%=DashboardConstants.PRODUCT_NAME %></font>
 		</td>
 		<td width="3%" style="vertical-align:middle">
 		<%

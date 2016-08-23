@@ -3,8 +3,8 @@
 <%@ include file="header.jsp"%>
 <section>
 <br>
-<h1>Getting Started With Light Weight Reporter!</h1>
-Light weight reporter is a simple web based report/dashboard generation tool. It lets you create simple reports/dashboard very easily. The package consists of war file that you need to deploy on a application server like tomcat.<br>
+<h1>Getting Started With <%=DashboardConstants.PRODUCT_NAME %>!</h1>
+<%=DashboardConstants.PRODUCT_NAME %> is a simple web based report/dashboard generation tool. It lets you create simple reports/dashboard very easily. The package consists of war file that you need to deploy on a application server like tomcat.<br>
 <h3>Prerequisite</h3>
 <ul>
 	<li>Tomcat Application Server v8.0 and above</li>
@@ -12,7 +12,7 @@ Light weight reporter is a simple web based report/dashboard generation tool. It
 </ul>
 <h3>Installation</h3>
 
-Copy the lwr.war file downloaded from sourceforge.net and place it under CATALINA_HOME/webapps/ directory. Light weight reporter uses JDBC to connect to database(s). The JDBC drivers for Postgres and MySQL are already bundled into the war file. To connect to any other database vendor, copy the required vendor specific JDBC jar file to CATALINA_HOME/webapps/lwr/WEB-INF/lib folder and restart the tomcate server<br>
+Copy the lwr.war file downloaded from sourceforge.net and place it under CATALINA_HOME/webapps/ directory. <%=DashboardConstants.PRODUCT_NAME %> uses JDBC to connect to database(s). The JDBC drivers for Postgres and MySQL are already bundled into the war file. To connect to any other database vendor, copy the required vendor specific JDBC jar file to CATALINA_HOME/webapps/lwr/WEB-INF/lib folder and restart the tomcate server<br>
 
 <h3>Step 1</h3>
 Access the application using below URL, <br>

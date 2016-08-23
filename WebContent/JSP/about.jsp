@@ -6,10 +6,10 @@
 	<br>
 	<table>
 			<tr>
-				<td style="color:black"><h1>Version 2.1</h1></td>
+				<td style="color:black"><h1>Version 3.1</h1></td>
 			</tr>
 			<tr>
-				<td style="color:black"><h4>Copyright Light Weight Reporter @ 2016</h4></td>
+				<td style="color:black"><h4>Copyright <%=DashboardConstants.PRODUCT_NAME %> @ 2016</h4></td>
 			</tr>
 			<tr>
 				<td style="color:darkblue"><h4>Share your feedback and wish list lwrreporter@gmail.com</h4></td>

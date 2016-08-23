@@ -89,7 +89,7 @@ function save(mode){
 					var cell = $(this);
 					var id = $(cell).attr("id");
 					var title = $(cell).find("input").val();
-					var query = $(cell).find("textarea").val();
+					var query = $(cell).find("textarea").val().trim();
 					var ctype = $("#"+rowNumber+"_0_"+columnIndex+"_select").val();
 					var dbalias = $("#"+rowNumber+"_0_"+columnIndex+"_conn").val();
 					var data={};
@@ -155,7 +155,7 @@ function runQuery(row,rowIndex,columnIndex){
 		});
 }
 
-function runQueryDash(innerRowIndex,rowIndex,columnIndex,dashBoardName){
+function runQueryDash(innerRowIndex,rowIndex,columnIndex,dashBoardName,userName){
 	var request = $.ajax({
 		url: "/lwr/rest/query/report",
 		type: "GET",
@@ -163,7 +163,8 @@ function runQueryDash(innerRowIndex,rowIndex,columnIndex,dashBoardName){
 			"reportName":dashBoardName,
 			"rowIndex":rowIndex,
 			"innerRowIndex":innerRowIndex,
-			"columnIndex":columnIndex},
+			"columnIndex":columnIndex,
+			"userName":userName},
 		success: function(resp) {
 				var x=window.open("","","width=400, height=300");
 				x.document.open();
@@ -176,7 +177,7 @@ function runQueryDash(innerRowIndex,rowIndex,columnIndex,dashBoardName){
 		});
 }
 
-function refreshElement(id,reportName,elementName,timeout){
+function refreshElement(id,reportName,elementName,timeout,userName){
 	setInterval(function() {
 		var height = $(id).height();
 		var width = $(id).width();
@@ -187,7 +188,8 @@ function refreshElement(id,reportName,elementName,timeout){
 			data: {
 				"reportName":reportName,
 				"elementName":elementName,
-				"chartType":"html_jfree"},
+				"chartType":"html_jfree",
+				"userName":userName},
 			success: function(resp) {
 					$(id).html(resp);
 				},
@@ -199,7 +201,7 @@ function refreshElement(id,reportName,elementName,timeout){
 }
 
 
-function loadElement(id,reportName,elementName){
+function loadElement(id,reportName,elementName,userName){
 	var height = $(id).height();
 	var width = $(id).width();
 	$(id).html("<table style=\"width:"+width+";height:"+height+";border:0px;vertical-align:center;text-align:center\"><tr><td style=\"vertical-align:middle;text-align:center\"><img src=\"/lwr/images/loading.gif\" style=\"width:75px;height:75px\"></img></td></tr></table>");
@@ -209,7 +211,8 @@ function loadElement(id,reportName,elementName){
 		data: {
 			"reportName":reportName,
 			"elementName":elementName,
-			"chartType":"html_jfree"},
+			"chartType":"html_jfree",
+			"userName":userName},
 		success: function(resp) {
 				$(id).html(resp);
 			},

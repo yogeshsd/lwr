@@ -22,13 +22,8 @@
 		JSONArray jsData=null;
 		String description="";
 		String reportName = name;
+		String userName = (String)request.getSession().getAttribute("userName");
 		if(name!=null){
-			String patterns[] = name.split(":");
-			String userName = DashboardConstants.PUBLIC_USER;
-			if(patterns.length==2){
-				userName = patterns[0];
-				reportName = patterns[1];
-			}
 			BufferedReader buffReader;
 			if(userName.equalsIgnoreCase(DashboardConstants.PUBLIC_USER))
 				buffReader = new BufferedReader(new FileReader(DashboardConstants.PUBLIC_REPORT_DIR+File.separatorChar+reportName));
