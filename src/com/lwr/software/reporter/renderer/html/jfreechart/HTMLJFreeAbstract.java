@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -34,6 +36,16 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 	
 	protected Map<Integer,String> headerIndexToTypeMap = new HashMap<Integer,String>();
 	
+	protected Set<String> chartMessages = new HashSet<String>();
+	
+	public Set<String> getChartMessages() {
+		return chartMessages;
+	}
+
+	public void setChartMessages(Set<String> chartMessages) {
+		this.chartMessages = chartMessages;
+	}
+
 	static{
 		File tempDir = new File(DashboardConstants.TEMP_PATH);
 		tempDir.mkdirs();
@@ -46,9 +58,23 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 	
 	public String render() {
 		try {
-			File file = getImage();
+			boolean isValidate = validate();
+			if(!isValidate){
+				StringBuffer html= new StringBuffer();
+				for (String chartMessage : chartMessages) {
+					html.append("<span><h6>"+chartMessage+"</h6><span>");
+				}
+				return html.toString();
+			}
+			
+			Dataset dataset = getDataset();
+			if(dataset == null)
+				return "<h6>No Data</h6>";
+
+			File file = getImage(dataset);
 			if(file == null)
-				return "No Data";
+				return "<h6>No Data</h6>";
+			
 			BufferedImage image = ImageIO.read(file);
 			byte[] src = ChartUtilities.encodeAsPNG(image);
 			String encoded = Base64.encodeBase64String(src);
@@ -84,10 +110,7 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 		return dataset;
 	}
 	
-	public File getImage() {
-		Dataset dataset = getDataset();
-		if(dataset == null)
-			return null;
+	public File getImage(Dataset dataset) {
 		String rowLabel = element.getHeader().get(0).toString();
 		String columnLabel = element.getHeader().get(1).toString();
 		String fileName = DashboardConstants.TEMP_PATH+element.getId()+element.getChartType()+".jpeg";
@@ -108,47 +131,48 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 		Map<String, List<Integer>> map = element.getDataTypeToIndex();
 		if(map==null)
 			return dataset;
-		
-		List<Integer> stringIndices = map.get(DashboardConstants.STRING);
-		int stringCount = stringIndices==null?0:stringIndices.size();
-		
-		List<Integer> timeIndices = map.get(DashboardConstants.DATETIME);
-		int timeCount = timeIndices==null?0:timeIndices.size();
-		
-		int dimCount = stringCount+timeCount;
-		
-		List<Integer> metricIndices = map.get(DashboardConstants.NUMBER);
-		int metricCount = metricIndices==null?0:metricIndices.size();
-		
-		if(dimCount != 1 )
-			throw new RuntimeException("Not Supported!");
-		if(metricCount != 1)
-			throw new RuntimeException("Not Supported!");
 		for (List<Object> row : rows) {
 			dataset.setValue(row.get(0).toString(),Double.parseDouble(row.get(1).toString()));
 		}
 		return dataset;
 	}
 	
+	public boolean validate() {
+		if(this.element.getChartType().equalsIgnoreCase(DashboardConstants.TABLE_TYPE))
+			return true;
+		if(element.getDimCount()>2){
+			chartMessages.add("The query has "+element.getDimColNames()+" dimensions. Minimum one and maximum two dimensions are supported.");
+			return false;
+		}
+		if(element.getMetricCount()>4){
+			chartMessages.add("The query has "+element.getMetricColNames()+" metrics. At max only 4 metrics can be graphed.");
+			return false;
+		}
+		if(this.element.getChartType().equalsIgnoreCase(DashboardConstants.PIE_CHART_TYPE))
+			if(element.getDimCount()!=1){
+				chartMessages.add("The query has "+element.getDimColNames()+" dimension. Pie chart is supported with only one dimension.");
+				return false;
+			}else if(element.getMetricCount()!=1){
+				chartMessages.add("The query has "+element.getMetricColNames()+" metrics. Pie chart is supported with only one metric.");
+				return false;
+			}
+		return true;
+	}
+	
 	protected Dataset createDataset() throws Exception {
 		Dataset dataset = null;
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		List<List<Object>> rows = element.getProcessedData();
+		
 		Map<String, List<Integer>> map = element.getDataTypeToIndex();
 		int numMetrics = element.getHeader().size();
-		List<Integer> indices = map.get(DashboardConstants.DATETIME);
-		int dateDims = indices==null?0:indices.size();
-		boolean isDateTime = indices != null && !indices.isEmpty()?true:false;
 		
-		indices = map.get(DashboardConstants.STRING);
-		int stringDims = indices==null?0:indices.size();
+		List<Integer> dateIndices = map.get(DashboardConstants.DATETIME);
+		boolean isDateTime = dateIndices != null && !dateIndices.isEmpty()?true:false;
 		
-		boolean isString = indices != null && !indices.isEmpty()?true:false;
+		List<Integer> stringIndices = map.get(DashboardConstants.STRING);
+		boolean isString = stringIndices != null && !stringIndices.isEmpty()?true:false;
 		
-		int totalDims = dateDims+stringDims;
-		
-		if(totalDims>2)
-			throw new RuntimeException("Not Supported!");
 		
 		if(numMetrics == 2 && isString && !isDateTime){
 			dataset = new DefaultCategoryDataset();

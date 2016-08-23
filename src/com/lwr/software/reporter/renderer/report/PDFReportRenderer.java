@@ -1,7 +1,6 @@
 package com.lwr.software.reporter.renderer.report;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -12,20 +11,21 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.jfree.data.general.Dataset;
 
 import com.lwr.software.reporter.DashboardConstants;
 import com.lwr.software.reporter.renderer.element.ElementRendererFactory;
-import com.lwr.software.reporter.renderer.element.HTMLJFreeElementRendererFactory;
 import com.lwr.software.reporter.renderer.element.IELementRendererFactory;
 import com.lwr.software.reporter.renderer.element.IElementRenderer;
 import com.lwr.software.reporter.renderer.html.jfreechart.HTMLJFreeAbstract;
 import com.lwr.software.reporter.reportmgmt.Element;
+import com.lwr.software.reporter.reportmgmt.Report;
 import com.lwr.software.reporter.reportmgmt.RowElement;
 
 public class PDFReportRenderer extends AbstractReportRenderer {
 
-	public PDFReportRenderer(String reportName) {
-		super(reportName);
+	public PDFReportRenderer(Report report) {
+		super(report);
 	}
 
 	@Override
@@ -55,7 +55,9 @@ public class PDFReportRenderer extends AbstractReportRenderer {
 					contentStream = new PDPageContentStream(document, blankPage, AppendMode.APPEND, true, false);
 					IELementRendererFactory factory = ElementRendererFactory.getRendererFactory(DashboardConstants.HTML_JFREE);
 					IElementRenderer renderer = factory.getRenderer(element);
-					File file = ((HTMLJFreeAbstract) renderer).getImage();
+					
+					Dataset dataSet = ((HTMLJFreeAbstract) renderer).getDataset();
+					File file = ((HTMLJFreeAbstract) renderer).getImage(dataSet);
 					if (file == null)
 						continue;
 					PDImageXObject pdImage = PDImageXObject.createFromFile(file.getAbsolutePath(), document);

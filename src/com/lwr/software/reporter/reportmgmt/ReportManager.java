@@ -137,14 +137,11 @@ public class ReportManager {
 		Map<String,Map<String,Report>> reps = new HashMap<String,Map<String,Report>>();
 		if(userName==null)
 			return reps;
+		init(userName);
 		Map<String, Report> privateReports = userReportMap.get(userName);
-		if(privateReports != null)
+		if(privateReports != null){
 			reps.put(userName,privateReports);
-		
-		Map<String, Report> publicReports = userReportMap.get(DashboardConstants.PUBLIC_USER);
-		if(publicReports != null )
-			reps.put(DashboardConstants.PUBLIC_USER,publicReports);
-		
+		}
 		return reps;
 	}
 	

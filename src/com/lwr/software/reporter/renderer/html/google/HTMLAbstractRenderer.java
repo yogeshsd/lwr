@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,9 +33,19 @@ public abstract class HTMLAbstractRenderer implements IElementRenderer{
 	
 	private Map<String, Integer> newHeaderToIndex = new LinkedHashMap<String, Integer>();
 	
+	protected Set<String> chartMessages = new HashSet<String>();
+	
 	protected boolean timeSeriesChart = false;
 
 	private boolean isSimpleDataSet = true;
+	
+	public Set<String> getChartMessages() {
+		return chartMessages;
+	}
+
+	public void setChartMessages(Set<String> chartMessages) {
+		this.chartMessages = chartMessages;
+	}
 	
 	protected HTMLAbstractRenderer(Element element){
 		this.element=element;
@@ -330,5 +341,25 @@ public abstract class HTMLAbstractRenderer implements IElementRenderer{
 				}
 			}
 		}
+	}
+	
+	public boolean validate(){
+		if(element.getDimCount()>2){
+			chartMessages.add("The query has "+element.getDimColNames()+" dimensions. Minimum one and maximum two dimensions are supported.");
+			return false;
+		}
+		if(element.getMetricCount()>4){
+			chartMessages.add("The query has "+element.getMetricColNames()+" metrics. At max only 4 metrics can be graphed.");
+			return false;
+		}
+		if(this.element.getChartType().equalsIgnoreCase(DashboardConstants.PIE_CHART_TYPE))
+			if(element.getDimCount()!=1){
+				chartMessages.add("The query has "+element.getDimColNames()+" dimension. Pie chart is supported with only one dimension.");
+				return false;
+			}else if(element.getMetricCount()!=1){
+				chartMessages.add("The query has "+element.getMetricColNames()+" metrics. Pie chart is supported with only one metric.");
+				return false;
+			}
+		return true;
 	}
 }

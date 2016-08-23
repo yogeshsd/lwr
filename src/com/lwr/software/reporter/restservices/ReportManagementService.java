@@ -1,5 +1,6 @@
 package com.lwr.software.reporter.restservices;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.simple.JSONArray;
 
 import com.lwr.software.reporter.DashboardConstants;
 import com.lwr.software.reporter.renderer.element.ElementRendererFactory;
@@ -31,18 +35,23 @@ public class ReportManagementService {
 	public String getReportNames(
 			@QueryParam("userName") String userName
 			){
+		ObjectMapper objectMapper = new ObjectMapper();
+		JSONArray reports = new JSONArray();
 		Map<String,Map<String,Report>> userToReport = ReportManager.getReportManager().getReports(userName);
 		Set<String> keys = userToReport.keySet();
-		StringBuilder builder = new StringBuilder("[");
 		for (String key : keys) {
 			Map<String, Report> value = userToReport.get(key);
 			Collection<Report> reps = value.values();
-			for (Report report : reps) 
-				builder.append("\""+report.getTitle()+"\",");
+			for (Report report : reps){ 
+				try {
+					 String reportString =  objectMapper.writeValueAsString(report);
+					 reports.add(reportString);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		String stringToReturn = builder.substring(0, builder.length()-1);
-		stringToReturn=stringToReturn+"]";
-		return builder.toString();
+		return reports.toJSONString();
 	}
 
 	@Path("/save")
@@ -69,17 +78,11 @@ public class ReportManagementService {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String executeQuery(
-			@QueryParam("reportName") String rName,
+			@QueryParam("reportName") String reportName,
 			@QueryParam("elementName") String elementName,
-			@QueryParam("renderType") String renderType
+			@QueryParam("renderType") String renderType,
+			@QueryParam("userName") String userName
 			){
-		String patterns[] = rName.split(":");
-		String userName = DashboardConstants.PUBLIC_USER;
-		String reportName = rName;
-		if(patterns.length==2){
-			userName = patterns[0];
-			reportName = patterns[1];
-		}
 		Report report = ReportManager.getReportManager().getReport(reportName,userName);
 		System.out.println("Report Name = "+reportName+", Element Name = "+elementName);
 		List<RowElement> reportElements = report.getRows();
@@ -87,7 +90,11 @@ public class ReportManagementService {
 			List<Element> elements = rowElement.getElements();
 			for (Element element : elements) {
 				if(element.getTitle().equalsIgnoreCase(elementName)){
-					element.init();
+					try {
+						element.init();
+					} catch (SQLException e) {
+						return "<h6>"+e.getMessage()+"</h6>";
+					}
 					IELementRendererFactory factory = ElementRendererFactory.getRendererFactory(DashboardConstants.HTML_JFREE);
 					IElementRenderer renderer = factory.getRenderer(element);
 					String toReturn =  renderer.render();
@@ -98,4 +105,5 @@ public class ReportManagementService {
 		}
 		return "No Data";
 	}
+	
 }

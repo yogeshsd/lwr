@@ -1,13 +1,9 @@
 package com.lwr.software.reporter.renderer.report;
 
-import java.io.BufferedOutputStream;
-
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.List;
 
 import com.lwr.software.reporter.DashboardConstants;
@@ -15,12 +11,13 @@ import com.lwr.software.reporter.renderer.element.ElementRendererFactory;
 import com.lwr.software.reporter.renderer.element.IELementRendererFactory;
 import com.lwr.software.reporter.renderer.element.IElementRenderer;
 import com.lwr.software.reporter.reportmgmt.Element;
+import com.lwr.software.reporter.reportmgmt.Report;
 import com.lwr.software.reporter.reportmgmt.RowElement;
 
 public class CSVReportRenderer extends AbstractReportRenderer {
 
-	public CSVReportRenderer(String reportName) {
-		super(reportName);
+	public CSVReportRenderer(Report report) {
+		super(report);
 	}
 	@Override
 	public String render() {

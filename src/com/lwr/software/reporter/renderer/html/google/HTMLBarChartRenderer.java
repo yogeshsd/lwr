@@ -41,5 +41,4 @@ public class HTMLBarChartRenderer extends HTMLAbstractRenderer{
 		html.append("</script>\n");
 		return html.toString();
 	}
-
 }

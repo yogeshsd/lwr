@@ -16,8 +16,8 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
 	
 	private boolean loadData = false;
 	
-	public HTMLReportRenderer(String reportName) {
-		super(reportName);
+	public HTMLReportRenderer(Report report) {
+		super(report);
 	}
 	
 	public void setRefreshInterval(long refreshInterval) {
@@ -76,15 +76,15 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
 				html.append("<tr>");
 				html.append("<th>\n");
 				html.append(element.getTitle());
-				html.append("<img align=\"right\" src=\"/lwr/images/show-data.png\" onclick=\"runQueryDash(" + rowIndex	+ "," + rowNumber + "," + colIndex + ",'" + userName+":"+reportName + "')\"></img>");
+				html.append("<img align=\"right\" src=\"/lwr/images/show-data.png\" onclick=\"runQueryDash(" + rowIndex	+ "," + rowNumber + "," + colIndex + ",'" +report.getTitle() + "')\"></img>");
 				html.append("</th>");
 				html.append("</tr><td>");
 				String divId = "pos_"+element.getPosition();
-				html.append("<div id=\""+divId+"\" onclick=\"refreshElement(this,'"+userName+":"+reportName+"','"+element.getTitle()+"',"+refreshInterval+")\">\n");
+				html.append("<div id=\""+divId+"\" onclick=\"refreshElement(this,'"+report.getTitle()+"','"+element.getTitle()+"',"+refreshInterval+")\">\n");
 				if(loadData)
 					html.append(buildElement(element));
 				else
-					html.append("<script>$("+divId+").load(loadElement("+divId+",'"+userName+":"+reportName+"','"+element.getTitle()+"'))</script>");
+					html.append("<script>$("+divId+").load(loadElement("+divId+",'"+report.getTitle()+"','"+element.getTitle()+"'))</script>");
 				html.append("</div>\n");
 				html.append("</td>");
 				html.append("</tr>");

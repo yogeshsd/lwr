@@ -4,13 +4,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.lwr.software.reporter.DashboardConstants;
-import com.lwr.software.reporter.admin.connmgmt.ConnectionFactory;
 import com.lwr.software.reporter.admin.connmgmt.ConnectionPool;
 import com.lwr.software.reporter.utils.DWHUtility;
 
@@ -38,6 +39,21 @@ public class Element {
     
     protected List<List<Object>> data;
     
+    @JsonIgnore
+    protected int dimCount=0;
+    
+    @JsonIgnore
+    protected int metricCount=0;
+    
+    @JsonIgnore
+    protected int stringCount=0;
+    
+    @JsonIgnore
+    protected int dateCount=0;
+    
+    @JsonIgnore
+    protected int booleanCount=0;
+    
 	@JsonIgnore
     protected int maxRow;
     
@@ -52,7 +68,10 @@ public class Element {
     
     @JsonIgnore
     protected Map<String,List<Integer>> dataTypeToIndex = new HashMap<String,List<Integer>>();
-    
+
+    @JsonIgnore
+    protected Map<String,Set<String>> dataTypeToColumnNames = new HashMap<String,Set<String>>();
+
     public int getMaxRow() {
 		return maxRow;
 	}
@@ -112,100 +131,6 @@ public class Element {
 		if(data == null)
 			return;
 		this.data = data;
-		processData();
-	}
-	
-	public void init(){
-		if (this.getQuery() == null)
-			return;
-		String sql = this.getQuery();
-		String dbalias = this.getDbalias();
-		Connection connection;
-		
-		if (dbalias == null){
-			dbalias="default";
-		}
-		connection = ConnectionPool.getInstance().getConnection(dbalias);
-		if (connection == null)
-			return;
-		DWHUtility utility = new DWHUtility(connection);
-		System.out.println(sql);
-		List<List<Object>> rows = new ArrayList<>();
-		try {
-			rows = utility.executeQuery(sql);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		if (rows == null || rows.isEmpty())
-			return;
-		if (rows.size() > 0) {
-			List<Object> headers = rows.get(0);
-			this.setHeader(headers);
-		}
-		rows.remove(0);
-		this.setData(rows);
-		ConnectionPool.getInstance().releaseConnection(connection, dbalias);
-	}
-
-	private void processData() {
-		int index=0;
-		dataTypeToIndex.clear();
-		for (Object column : header) {
-			String head = ((String)column).replaceAll("'", "");
-			String hs[] = head.split(":");
-			List<Integer> indices = dataTypeToIndex.get(hs[0]);
-			if(indices == null){
-				indices = new ArrayList<Integer>();
-				dataTypeToIndex.put(hs[0], indices);
-			}
-			indices.add(index);
-			indexToDataTypeMap.put(index, hs[0]);
-			index++;
-		}
-		
-		for (List<Object> row : data) {
-			index=0;
-			List<Object> modifiedRow = new ArrayList<Object>();
-			List<Integer> indices = dataTypeToIndex.get(DashboardConstants.DATETIME);
-			if(indices != null){
-				for (Integer ind : indices) {
-					index++;
-					modifiedRow.add(row.get(ind));
-				}
-			}
-
-			indices = dataTypeToIndex.get(DashboardConstants.STRING);
-			if(indices != null){
-				StringBuffer mergedString = new StringBuffer();
-				for (Integer ind : indices) {
-					if(index==0){
-						modifiedRow.add(row.get(ind));
-						index++;
-					}else {
-						mergedString.append(row.get(ind));
-					}
-				}
-				if(!mergedString.toString().isEmpty())
-					modifiedRow.add(mergedString);
-			}
-
-			indices = dataTypeToIndex.get(DashboardConstants.BOOLEAN);
-			if(indices != null){
-				for (Integer ind : indices) {
-					index++;
-					modifiedRow.add(row.get(ind));
-				}
-			}
-
-			indices = dataTypeToIndex.get(DashboardConstants.NUMBER);
-			if(indices != null){
-				for (Integer ind : indices) {
-					index++;
-					modifiedRow.add(row.get(ind));
-				}
-			}
-			processedData.add(modifiedRow);
-		}
 	}
 
 	public String getPosition() {
@@ -280,6 +205,46 @@ public class Element {
 		this.chartType = chartType;
 	}
 	
+	public int getDimCount() {
+		return dimCount;
+	}
+
+	public void setDimCount(int dimCount) {
+		this.dimCount = dimCount;
+	}
+
+	public int getMetricCount() {
+		return metricCount;
+	}
+
+	public void setMetricCount(int metricCount) {
+		this.metricCount = metricCount;
+	}
+
+	public int getStringCount() {
+		return stringCount;
+	}
+
+	public void setStringCount(int stringCount) {
+		this.stringCount = stringCount;
+	}
+
+	public int getDateCount() {
+		return dateCount;
+	}
+
+	public void setDateCount(int dateCount) {
+		this.dateCount = dateCount;
+	}
+
+	public int getBooleanCount() {
+		return booleanCount;
+	}
+
+	public void setBooleanCount(int booleanCount) {
+		this.booleanCount = booleanCount;
+	}
+
 	public void clear(){
 		if(this.header!=null)
 			this.header.clear();
@@ -293,4 +258,136 @@ public class Element {
 			this.processedData.clear();
 	}
 	
+	public void init() throws SQLException{
+		if (this.getQuery() == null)
+			return;
+		
+		String sql = this.getQuery();
+		String dbalias = this.getDbalias();
+		if (dbalias == null){
+			dbalias="default";
+		}
+		Connection connection = ConnectionPool.getInstance().getConnection(dbalias);
+		if (connection == null)
+			return;
+		
+		List<List<Object>> rows = new ArrayList<>();
+		DWHUtility utility = new DWHUtility(connection);
+		
+		try {
+			rows = utility.executeQuery(sql);
+		} catch (SQLException e) {
+			throw e;
+		} finally{
+			ConnectionPool.getInstance().releaseConnection(connection, dbalias);
+		}
+		
+		if (rows == null || rows.isEmpty())
+			return;
+		
+		List<Object> headers = rows.get(0);
+		this.setHeader(headers);
+		
+		rows.remove(0);
+		this.setData(rows);
+		
+		processMetaData();
+		processData();
+	}
+
+	private void processMetaData() {
+		int index=0;
+		for (Object column : header) {
+			String head = ((String)column).replaceAll("'", "");
+			String hs[] = head.split(":");
+			
+			List<Integer> indices = dataTypeToIndex.get(hs[0]);
+			if(indices == null){
+				indices = new ArrayList<Integer>();
+				dataTypeToIndex.put(hs[0], indices);
+			}
+			indices.add(index);
+			
+			Set<String> colNames = dataTypeToColumnNames.get(hs[0]);
+			if(colNames == null){
+				colNames = new HashSet<String>();
+				dataTypeToColumnNames.put(hs[0],colNames );
+			}
+			colNames.add(hs[1]);
+			
+			indexToDataTypeMap.put(index, hs[0]);
+			index++;
+		}
+		
+		List<Integer> dateIndices = dataTypeToIndex.get(DashboardConstants.DATETIME);
+		List<Integer> stringIndices = dataTypeToIndex.get(DashboardConstants.STRING);
+		List<Integer> metricIndices = dataTypeToIndex.get(DashboardConstants.NUMBER);
+		
+		dateCount = dateIndices==null?0:dateIndices.size();
+		stringCount = stringIndices==null?0:stringIndices.size();
+		metricCount = metricIndices==null?0:metricIndices.size();
+		dimCount = stringCount+dateCount;
+	}
+
+	private void processData() {
+		for (List<Object> row : data) {
+			List<Object> modifiedRow = new ArrayList<Object>();
+			
+			List<Integer> indices = dataTypeToIndex.get(DashboardConstants.DATETIME);
+			if(indices != null){
+				for (Integer ind : indices) 
+					modifiedRow.add(row.get(ind));
+			}
+
+			indices = dataTypeToIndex.get(DashboardConstants.STRING);
+			if(indices != null){
+				for (Integer ind : indices) 
+					modifiedRow.add(row.get(ind));
+			}
+
+			indices = dataTypeToIndex.get(DashboardConstants.BOOLEAN);
+			if(indices != null){
+				for (Integer ind : indices) 
+					modifiedRow.add(row.get(ind));
+			}
+
+			indices = dataTypeToIndex.get(DashboardConstants.NUMBER);
+			if(indices != null){
+				for (Integer ind : indices) 
+					modifiedRow.add(row.get(ind));
+			}
+			processedData.add(modifiedRow);
+		}
+	}
+
+	public Set<String> getDimColNames() {
+		Set<String> toReturn = new HashSet<String>();
+		Set<String> dateTimeCols = this.dataTypeToColumnNames.get(DashboardConstants.DATETIME);
+		if(dateTimeCols!=null)
+			toReturn.addAll(dateTimeCols);
+		
+		Set<String> stringCols = this.dataTypeToColumnNames.get(DashboardConstants.STRING);
+		if(stringCols!=null)
+			toReturn.addAll(stringCols);
+		
+		return toReturn;
+	}
+
+	public Set<String> getMetricColNames() {
+		Set<String> toReturn = new HashSet<String>();
+		Set<String> metricCols = this.dataTypeToColumnNames.get(DashboardConstants.NUMBER);
+		if(metricCols!=null)
+			toReturn.addAll(metricCols);
+		return toReturn;
+
+	}
+	
+	public Element(String query,String chartType,String dbalias) {
+		this.query=query;
+		this.chartType=chartType;
+		this.dbalias=dbalias;
+	}
+	
+	public Element(){
+	}
 }
