@@ -144,7 +144,7 @@
 			}
 		%>
 		<br>
-		Report Name <input type="text" id="dashname" name="dash-name" value="<%=reportName%>"></input>
+		Report Name <input type="text" id="dashname" name="dash-name" value="<%=name%>"></input>
 		<hr>
 		Report Description <input type="text" id="description" name="description" value="<%=description %>"></input>
 		<hr>

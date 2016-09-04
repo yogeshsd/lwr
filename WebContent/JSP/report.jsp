@@ -68,8 +68,9 @@
 										<td>
 											<%
 											String divId = "pos_"+element.getPosition();
+											double width = 100/element.getMaxColumn();
 											 %>
-											<div id="<%=divId%>" onclick="refreshElement(this,'<%=report.getTitle()%>','<%=element.getTitle()%>',<%=user.getRefreshInterval()%>,'<%=userName%>')">
+											<div id="<%=divId%>" style="width:<%=width%>%" onclick="refreshElement(this,'<%=report.getTitle()%>','<%=element.getTitle()%>',<%=user.getRefreshInterval()%>,'<%=userName%>')">
 												<script>
 													$("+divId+").load(loadElement(<%=divId%>,'<%=report.getTitle()%>','<%=element.getTitle()%>','<%=userName%>'))
 												</script>

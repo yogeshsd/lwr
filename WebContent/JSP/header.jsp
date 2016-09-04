@@ -48,7 +48,7 @@
 </header>
 <nav>
 <div>
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-tabs" style="border-color:#ffffff;padding:5px">
 	<%
 		String name = (String)request.getParameter("name");
 		UserSecurityContext context = (UserSecurityContext) request.getSession().getAttribute(DashboardConstants.SECURITY_CONTEXT);
