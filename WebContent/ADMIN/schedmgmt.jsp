@@ -59,26 +59,27 @@
 			</tr>
 			<%
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				ScheduleManager manager = ScheduleManager.getScheduleManager();
-				Set<Schedule> schedules = manager.getSchedules();
-				for(Schedule s : schedules){
-					%>
-					<tr onclick="selectSchedule(this)" id="<%=s.getScheduleName()%>">
-						<td><%=s.getScheduleName() %></td>
-						<td><%=s.getReportName() %></td>
-						<td><%=s.getFormat() %></td>
-						<td><%=s.getDestination() %></td>
-						<td><%=format.format(s.getStartDate())%></td>
-						<td><%=s.getRecurrence() %></td>
-						<td><%=s.getInterval()%></td>
-						<td style="display:none"><%=s.getFolderName()%></td>
-						<td style="display:none"><%=s.getSmtpHost()%></td>
-						<td style="display:none"><%=s.getSmtpPort()%></td>
-						<td style="display:none"><%=s.getReceiverEmail()%></td>
-						<td style="display:none"><%=s.getSenderEmail()%></td>
-						<td style="min-width:30px"><img src="/lwr/images/sign-delete.png" onclick="deleteSchedule('<%=s.getScheduleName()%>')"></img></td>
-					</tr>
-					<%
+				Set<Schedule> schedules = ScheduleManager.getScheduleManager().getSchedules(user.getUsername());
+				if(schedules != null){
+					for(Schedule s : schedules){
+						%>
+						<tr onclick="selectSchedule(this)" id="<%=s.getScheduleName()%>">
+							<td><%=s.getScheduleName() %></td>
+							<td><%=s.getReportName() %></td>
+							<td><%=s.getFormat() %></td>
+							<td><%=s.getDestination() %></td>
+							<td><%=format.format(s.getStartDate())%></td>
+							<td><%=s.getRecurrence() %></td>
+							<td><%=s.getInterval()%></td>
+							<td style="display:none"><%=s.getFolderName()%></td>
+							<td style="display:none"><%=s.getSmtpHost()%></td>
+							<td style="display:none"><%=s.getSmtpPort()%></td>
+							<td style="display:none"><%=s.getReceiverEmail()%></td>
+							<td style="display:none"><%=s.getSenderEmail()%></td>
+							<td style="min-width:30px"><img src="/lwr/images/sign-delete.png" onclick="deleteSchedule('<%=s.getScheduleName()%>')"></img></td>
+						</tr>
+						<%
+					}
 				}
 			%>
 		</table>

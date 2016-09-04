@@ -22,9 +22,6 @@ header{
 }
 nav{
 	width:100%;
-	height:5%;
-	min-height:5%;
-	max-height:5%;
 	z-index: 1000;
 	padding-left:10px;
 	border-collapse: collapse;
@@ -235,11 +232,6 @@ a.homepagelinks:hover{
 	color:black;
 }
 
-.jfreeimage{
-	width:100%;
-	height:100%;
-}
-
 .alerttext{
 	color:black;
 	text-align:center;
@@ -250,29 +242,6 @@ div.topnav_adminpages{
 	overflow: auto;
 }
 
-/** bootstrap **/
-
-.nav-tabs > li > a:hover,.nav-tabs > li > a:focus,.nav-tabs > li > a:active{
-  	background-color: #679BB7 !important;
-    border: medium none;
-    border-color:#ffffff;
-    border-radius: 0px;
-    color:#ffffff;
-}
-
-.nav-tabs > li > ul > li> a:hover,.nav-tabs > li > ul > li> a:focus,.nav-tabs > li > ul > li> a:active{
-	background: #679BB7 !important;
-    border: medium none;
-    border-radius: 0px;
-    color:#ffffff;
-}
-
-.dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus{
-	background: #679BB7 !important;
-    border: medium none;
-    border-radius: 0px;
-    color:#ffffff;
-}
 
 .dropdown{
 	margin-left:15px;
@@ -284,4 +253,22 @@ div.topnav_adminpages{
 
 input{
 	margin:0px;
+}
+
+.nav-tabs>li>a:focus,.nav-tabs>li>a:hover{
+	border: 1px solid #679BB7 !important;
+	background-color: #679BB7 !important;
+	color: #ffffff !important;
+}
+
+.nav-tabs>li.active>a{
+	border: 1px solid #679BB7 !important;
+	background-color: #679BB7 !important;
+	color: #ffffff !important;
+}
+
+.nav-tabs>li>a{
+	border: 1px solid #ddd !important;
+	background-color: white !important;
+	color: black !important;
 }

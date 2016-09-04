@@ -64,56 +64,58 @@
 	<hr>
 	<div class="bottomnav_adminpages">
 		<h4>Create/Edit Connection</h4>
-		<table style="width:50%" class="admincellinputtable">
-			<tr>
-				<td>
-					Connection Alias
-				</td>
-				<td>
-					<input name="alias" id="alias" type="text"></input>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Default Connection
-				</td>
-				<td style="text-align: left;">
-					<input style="width: 20px;text-align: left;" name="isdefault" id="isdefault" type="checkbox"></input>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					User Name
-				</td>
-				<td>
-					<input name="username" id="username" type="text"></input>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Password
-				</td>
-				<td>
-					<input name="password" id="password" type="password"></input>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Database Driver
-				</td>
-				<td>
-					<input name="driver" id="driver" type="text"></input>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					Database URL
-				</td>
-				<td>
-					<input name="url" id="url" type="text"></input>
-				</td>
-			</tr>
-		</table>
+		<form autocomplete="on">
+			<table style="width:50%" class="admincellinputtable">
+				<tr>
+					<td>
+						Connection Alias
+					</td>
+					<td>
+						<input name="alias" id="alias" type="text"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Default Connection
+					</td>
+					<td style="text-align: left;">
+						<input style="width: 20px;text-align: left;" name="isdefault" id="isdefault" type="checkbox"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						User Name
+					</td>
+					<td>
+						<input name="username" id="username" type="text"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Password
+					</td>
+					<td>
+						<input name="password" id="password" type="password"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Database Driver
+					</td>
+					<td>
+						<input name="driver" id="driver" type="text" autocomplete="on"></input>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Database URL
+					</td>
+					<td>
+						<input name="url" id="url" type="text" autocomplete="on"></input>
+					</td>
+				</tr>
+			</table>
+		</form>
 	</div>
 	<br>
 	<button type="button" onclick="saveConnection()" class="btn btn-primary" style="background:#679BB7">Submit</button>

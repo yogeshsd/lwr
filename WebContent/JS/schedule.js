@@ -4,8 +4,10 @@
 	function deleteSchedule(schedulename){
 		var x = confirm("You are deleting schedule '"+schedulename+"'!");
 		if(x){
+			var username = "public";
+			username=$("#usernamehidden").val();
 			var request = $.ajax({
-				url: "http://localhost:8080/lwr/rest/schedules/remove/"+schedulename,
+				url: "http://localhost:8080/lwr/rest/schedules/remove/"+schedulename+"/"+username,
 				type: "POST",
 				success: function(resp){  
 					$('table#admintable tr#'+schedulename).remove();
@@ -38,12 +40,10 @@
 				var dest = column.html();
 				$("#"+dest).prop("checked",true);
 				if(dest == "EMAIL"){
-					$("#inboxconfig").hide();
 					$("#smtpconfig").show();
-					$("#INBOX").prop("checked",false);
-				}else if(dest == "INBOX"){
+					$("#PersonalFolders").prop("checked",false);
+				}else if(dest == "PersonalFolders"){
 					$("#smtpconfig").hide();
-					$("#inboxconfig").show();
 					$("#EMAIL").prop("checked",false);
 					
 				}
@@ -99,7 +99,7 @@
 	}
 	function saveSchedule(){
 		var email = $("#EMAIL").prop('checked');
-		var inbox = $("#INBOX").prop('checked');
+		var inbox = $("#PersonalFolders").prop('checked');
 		var hourly = $("#HOURLY").prop('checked');
 		var daily = $("#DAILY").prop('checked');
 		var monthly = $("#MONTHLY").prop('checked');
@@ -121,8 +121,7 @@
 			var senderemail = $("#senderemail").val();
 			var receiveremail = $("#receiveremail").val();
 		}else{
-			var foldername = $("#foldername").val();
-			destination="INBOX";
+			destination="PersonalFolders"
 		}
 		
 		if(daily){
@@ -150,11 +149,13 @@
 		schedule["smtpPort"]=smtpport;
 		schedule["senderEmail"]=senderemail;
 		schedule["receiverEmail"]=receiveremail;
-		schedule["folderName"]=foldername;
+		schedule["folderName"]="NA";
 		schedule["startDate"]=startdate;
 		schedules[0]=schedule;
+		var username = "public";
+		username=$("#usernamehidden").val();
 		var request = $.ajax({
-			url: "http://localhost:8080/lwr/rest/schedules/save?schedules="+JSON.stringify(schedules),
+			url: "http://localhost:8080/lwr/rest/schedules/save?schedules="+JSON.stringify(schedules)+"&userName="+username,
 			type: "POST",
 			success: function(resp){
 						var row = $("#"+schedulename);
@@ -174,11 +175,9 @@
 		var dest=ele;
 		if(dest == 'EMAIL' ){
 			$("#smtpconfig").show();
-			$("#inboxconfig").hide();
-			$('#INBOX').prop("checked",false);
-		}else if(dest == 'INBOX'){
+			$('#PersonalFolders').prop("checked",false);
+		}else if(dest == 'PersonalFolders'){
 			$("#smtpconfig").hide();
-			$("#inboxconfig").show();
 			$('#EMAIL').prop("checked",false)
 		}
 	}
@@ -203,4 +202,3 @@
 			$('#DAILY').prop("checked",false);
 		}
 	}
-		

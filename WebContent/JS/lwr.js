@@ -144,7 +144,7 @@ function runQuery(row,rowIndex,columnIndex){
 		type: "GET",
 		data: {"sql":sqlTextArea,"charttype":chartType,"dbAlias":dbalias},
 		success: function(resp) {
-				var x=window.open("","","width=400, height=300");
+				var x=window.open("","","directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,scrollbars=no,resizable=no,width=400,height=350");
 				x.document.open();
 				x.document.write(resp);
 				x.document.close();
@@ -166,7 +166,7 @@ function runQueryDash(innerRowIndex,rowIndex,columnIndex,dashBoardName,userName)
 			"columnIndex":columnIndex,
 			"userName":userName},
 		success: function(resp) {
-				var x=window.open("","","width=400, height=300");
+				var x=window.open("","","directories=0,titlebar=0,toolbar=0,location=0,status=0,menubar=0,scrollbars=no,resizable=no,width=400,height=350");
 				x.document.open();
 				x.document.write(resp);
 				x.document.close();
@@ -220,4 +220,8 @@ function loadElement(id,reportName,elementName,userName){
 			    alert("Unable to query. Error "+error);
 			}
 	});
+}
+
+function showAlerts(title){
+	alert(title);
 }
