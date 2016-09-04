@@ -36,6 +36,7 @@ public class MenuFactory {
 		
 		MenuItem adminMenu = new MenuItem("Administration","#");
 		adminMenu.addRole(Role.ADMIN);
+		adminMenu.addRole(Role.VIEW);
 		adminMenu.addPage(DashboardConstants.ALL_PAGES);
 		
 		MenuItem userMenu = new MenuItem("User Management","/lwr/usermgmt");
@@ -50,6 +51,7 @@ public class MenuFactory {
 		
 		MenuItem scheduleMenu = new MenuItem("Schedule Management","/lwr/schedmgmt");
 		scheduleMenu.addRole(Role.ADMIN);
+		scheduleMenu.addRole(Role.VIEW);
 		scheduleMenu.addPage(DashboardConstants.ALL_PAGES);
 		adminMenu.addSubMenuItem(scheduleMenu);
 
@@ -61,12 +63,18 @@ public class MenuFactory {
 		MenuItem helpStart = new MenuItem("Getting Started","/lwr/getstarted");
 		helpStart.addRole(Role.ALL);
 		helpStart.addPage(DashboardConstants.ALL_PAGES);
+		
+		MenuItem helpChart = new MenuItem("Chart Samples","/lwr/chartsample");
+		helpChart.addRole(Role.ALL);
+		helpChart.addPage(DashboardConstants.ALL_PAGES);
+
 
 		MenuItem helpAbout = new MenuItem("About","/lwr/about");
 		helpAbout.addRole(Role.ALL);
 		helpAbout.addPage(DashboardConstants.ALL_PAGES);
 		
 		helpMenu.addSubMenuItem(helpStart);
+		helpMenu.addSubMenuItem(helpChart);
 		helpMenu.addSubMenuItem(helpAbout);
 
 		MenuItem fileMenu = new MenuItem("File","#");
@@ -76,6 +84,7 @@ public class MenuFactory {
 		
 		MenuItem newMenu = new MenuItem("New Report","/lwr/createedit");
 		newMenu.addRole(Role.ADMIN);
+		newMenu.addRole(Role.VIEW);
 		newMenu.addPage("/lwr/home");
 		newMenu.addPage("/lwr/report");
 		newMenu.addPage("/lwr/about");
@@ -90,12 +99,14 @@ public class MenuFactory {
 		
 		MenuItem saveMenuPrivate = new MenuItem("Save - Private Folder","javascript:save('personal')");
 		saveMenuPrivate.addRole(Role.ADMIN);
+		saveMenuPrivate.addRole(Role.VIEW);
 		saveMenuPrivate.addPage("/lwr/createedit");
 
 		
 		MenuItem editMenu = new MenuItem("Edit Report","/lwr/createedit");
 		editMenu.setUseReportParam(true);
 		editMenu.addRole(Role.ADMIN);
+		editMenu.addRole(Role.VIEW);
 		editMenu.addPage("/lwr/report");
 		
 		fileMenu.addSubMenuItem(newMenu);

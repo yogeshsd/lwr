@@ -76,15 +76,11 @@ public class HTMLReportRenderer extends AbstractReportRenderer {
 				html.append("<tr>");
 				html.append("<th>\n");
 				html.append(element.getTitle());
-				html.append("<img align=\"right\" src=\"/lwr/images/show-data.png\" onclick=\"runQueryDash(" + rowIndex	+ "," + rowNumber + "," + colIndex + ",'" +report.getTitle() + "')\"></img>");
 				html.append("</th>");
 				html.append("</tr><td>");
 				String divId = "pos_"+element.getPosition();
-				html.append("<div id=\""+divId+"\" onclick=\"refreshElement(this,'"+report.getTitle()+"','"+element.getTitle()+"',"+refreshInterval+")\">\n");
-				if(loadData)
-					html.append(buildElement(element));
-				else
-					html.append("<script>$("+divId+").load(loadElement("+divId+",'"+report.getTitle()+"','"+element.getTitle()+"'))</script>");
+				html.append("<div id=\""+divId+"\">\n");
+				html.append(buildElement(element));
 				html.append("</div>\n");
 				html.append("</td>");
 				html.append("</tr>");

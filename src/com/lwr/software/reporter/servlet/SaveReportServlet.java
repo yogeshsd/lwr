@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.lwr.software.reporter.DashboardConstants;
+import com.lwr.software.reporter.DashboardConstants.OutputFormat;
 import com.lwr.software.reporter.admin.usermgmt.User;
 import com.lwr.software.reporter.admin.usermgmt.UserManager;
 import com.lwr.software.reporter.renderer.report.HTMLReportRenderer;
@@ -38,18 +39,18 @@ public class SaveReportServlet extends HttpServlet {
 			return;
 
 		OutputStream stream = response.getOutputStream();
-		if(type.equalsIgnoreCase(DashboardConstants.CSV)){
-			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(DashboardConstants.CSV, report,chartType);
+		if(type.equalsIgnoreCase(OutputFormat.CSV.toString())){
+			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(OutputFormat.CSV, report,chartType);
 	        response.setContentType("application/octet-stream");
 	        response.setHeader("Content-Disposition","attachment;filename="+reportName+".csv");
 			renderer.render(stream);
 		}else if(type.equalsIgnoreCase(DashboardConstants.PDF)){
-			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(DashboardConstants.PDF, report,chartType);
+			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(OutputFormat.PDF, report,chartType);
 	        response.setContentType("application/octet-stream");
 	        response.setHeader("Content-Disposition","attachment;filename="+reportName+".pdf");
 			renderer.render(stream);
 		}else if(type.equalsIgnoreCase(DashboardConstants.HTML)){
-			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(DashboardConstants.HTML, report,chartType);
+			IReportRenderer renderer = ReportRendererFactory.getReportRenderer(OutputFormat.HTML, report,chartType);
 			((HTMLReportRenderer)renderer).setLoadData(true);
 	        response.setContentType("application/octet-stream");
 	        response.setHeader("Content-Disposition","attachment;filename="+reportName+".html");

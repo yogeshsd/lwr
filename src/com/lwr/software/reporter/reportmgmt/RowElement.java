@@ -1,5 +1,6 @@
 package com.lwr.software.reporter.reportmgmt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RowElement {
@@ -15,5 +16,16 @@ public class RowElement {
 	
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
+	}
+
+	public RowElement newInstance() {
+		RowElement newInstance = new RowElement();
+		newInstance.elements = new ArrayList<Element>();
+		if(this.elements != null){
+			for (Element element : elements) {
+				newInstance.elements.add(element.newInstance());
+			}
+		}
+		return newInstance;
 	}
 }

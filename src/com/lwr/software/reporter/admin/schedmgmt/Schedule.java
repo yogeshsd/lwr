@@ -23,7 +23,7 @@ public class Schedule {
 	
 	private Recurrence recurrence = Recurrence.HOURLY;
 	
-	private Long interval;
+	private int interval;
 	
 	private String smtpHost;
 	
@@ -93,11 +93,11 @@ public class Schedule {
 		this.status = status;
 	}
 
-	public Long getInterval() {
+	public int getInterval() {
 		return interval;
 	}
 
-	public void setInterval(Long interval) {
+	public void setInterval(int interval) {
 		this.interval = interval;
 	}
 

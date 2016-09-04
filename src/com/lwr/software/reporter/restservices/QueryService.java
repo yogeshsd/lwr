@@ -67,7 +67,7 @@ public class QueryService {
 		try {
 			element.init();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			return "<h6>"+e.getMessage()+"</h6>";
 		}
 		IELementRendererFactory factory = ElementRendererFactory.getRendererFactory(DashboardConstants.HTML_JFREE);
 		IElementRenderer renderer = factory.getRenderer(element);
@@ -80,7 +80,7 @@ public class QueryService {
 	private String buildHTML(boolean isValid,Set<String> messages, Element element) {
 		StringBuffer html = new StringBuffer();
 		if(isValid){
-			html.append("<table style=\"background-color: #f2f2f2;border: 1px solid #6a6a6a\">");
+			html.append("<table style=\"border: 1px solid #6a6a6a;border-collapse: collapse;\">");
 			html.append("<tr>");
 			List<Object> headers = element.getHeader();
 			List<List<Object>> rows = element.getData();
@@ -97,13 +97,13 @@ public class QueryService {
 				}
 				count++;
 				dataTypeToCount.put(dataType,count);
-				html.append("<th style=\"background-color: #6a6a6a;color: #ffffff;\">"+columnName+"</th>");
+				html.append("<th style=\"background-color: #679BB7;color: #ffffff;border-collapse: collapse;font-family:Arial,Verdana,sans-serif;font-size:12px;\">"+columnName+"</th>");
 			}
 			html.append("</tr>");
 			for (List<Object> row : rows) {
 				html.append("<tr>");
 				for (Object column : row) {
-					html.append("<td style=\"border: 1px solid #6a6a6a\">"+column+"</td>");
+					html.append("<td style=\"border: 1px solid #679BB7;border-collapse: collapse;font-family:Arial,Verdana,sans-serif;font-size:12px;\">"+column+"</td>");
 				}
 				html.append("</tr>");
 			}
@@ -113,7 +113,7 @@ public class QueryService {
 		StringBuffer htmlToReturn = new StringBuffer();
 		if(!isValid){
 			htmlToReturn.append("<div>");
-			htmlToReturn.append("<h3>Validation Status : <img src=\"images/red_cross.ico\"></></h3>");
+			htmlToReturn.append("<h3><span style=\"font-family:Arial,Verdana,sans-serif;font-size:16px;\">Validation Status : <img src=\"images/red_cross.ico\"></></span></h3>");
 			htmlToReturn.append("<ul>");
 			for (String message : messages) {
 				htmlToReturn.append("<li>"+message+"</li>");
@@ -122,10 +122,10 @@ public class QueryService {
 			htmlToReturn.append("</div>");
 		}else{
 			htmlToReturn.append("<div>");
-			htmlToReturn.append("<h3>Validation Status : <img src=\"images/right_tick.ico\"></></h3>");
+			htmlToReturn.append("<h3><span style=\"font-family:Arial,Verdana,sans-serif;font-size:16px;\">Validation Status : <img src=\"images/right_tick.ico\"></></span></h3>");
 			htmlToReturn.append("</div>");
 		}
-		htmlToReturn.append("<h3>Data Rows</h3>");
+		htmlToReturn.append("<h3><span style=\"font-family:Arial,Verdana,sans-serif;font-size:16px;\">Data Rows</span></h3>");
 		htmlToReturn.append("<hr>");
 		htmlToReturn.append(html);
 		return htmlToReturn.toString();
