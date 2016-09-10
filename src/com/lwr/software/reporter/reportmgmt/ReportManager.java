@@ -51,7 +51,7 @@ public class ReportManager {
 		String reportFiles[] = dir.list();
 		for(String reportFile : reportFiles){
 			File f = new File(reportFile);
-			if(f.isDirectory())
+			if(f.isDirectory() || reportFile.equalsIgnoreCase("schedule"))
 				continue;
 		    try {
 		    	ObjectMapper objectMapper = new ObjectMapper();
@@ -84,7 +84,7 @@ public class ReportManager {
 		Map<String, Report> map = userReportMap.get(userName);
 		if(map == null || map.isEmpty())
 			return null;
-		return map.get(reportTitle);
+		return map.get(reportTitle).newInstance();
 	}
 
 	private boolean serializeReport(String components,String dashboardname,String userName){
@@ -117,8 +117,11 @@ public class ReportManager {
 	        FileWriter writer = null;
 	        if(userName.equalsIgnoreCase(DashboardConstants.PUBLIC_USER))
 	        	writer = new FileWriter(DashboardConstants.PUBLIC_REPORT_DIR+dashboardname);
-	        else
+	        else{
+	        	File path = new File(DashboardConstants.PRIVATE_REPORT_DIR+File.separatorChar+userName+File.separatorChar);
+	        	path.mkdirs();
 	        	writer = new FileWriter(DashboardConstants.PRIVATE_REPORT_DIR+File.separatorChar+userName+File.separatorChar+dashboardname);
+	        }
 	        writer.write(dataToRight);
 	        writer.flush();
 	        writer.close();

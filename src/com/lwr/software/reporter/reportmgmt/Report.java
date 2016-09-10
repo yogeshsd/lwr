@@ -1,5 +1,6 @@
 package com.lwr.software.reporter.reportmgmt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Report {
@@ -42,5 +43,19 @@ public class Report {
 
 	public void setRows(List<RowElement> rows) {
 		this.rows = rows;
+	}
+	
+	public synchronized Report newInstance(){
+		Report newReport = new Report();
+		newReport.title=this.title;
+		newReport.description=this.description;
+		newReport.maxrows=this.maxrows;
+		newReport.rows= new ArrayList<>();
+		if(this.rows!= null){
+			for (RowElement rowElement : this.rows) {
+				newReport.rows.add(rowElement.newInstance());
+			}
+		}
+		return newReport;
 	}
 }

@@ -113,7 +113,7 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 	public File getImage(Dataset dataset) {
 		String rowLabel = element.getHeader().get(0).toString();
 		String columnLabel = element.getHeader().get(1).toString();
-		String fileName = DashboardConstants.TEMP_PATH+element.getId()+element.getChartType()+".jpeg";
+		String fileName = DashboardConstants.TEMP_PATH+element.getId()+element.getChartType()+"_"+System.nanoTime()+".jpeg";
 		JFreeChart chart = HTMLJFreeChartFactory.getChart(this.element.getChartType(), rowLabel, columnLabel, dataset);
 		try {
 			File file = new File(fileName);
@@ -141,6 +141,7 @@ public abstract class HTMLJFreeAbstract implements IElementRenderer{
 		if(this.element.getChartType().equalsIgnoreCase(DashboardConstants.TABLE_TYPE))
 			return true;
 		if(element.getDimCount()>2){
+			System.out.println("###################################"+element.getDimCount()+this.element);
 			chartMessages.add("The query has "+element.getDimColNames()+" dimensions. Minimum one and maximum two dimensions are supported.");
 			return false;
 		}

@@ -4,7 +4,7 @@ import java.io.File;
 
 public interface DashboardConstants {
 
-	public static final String PATH=".";
+	public static final String PATH="..";
 //	public static final String PATH="C:\\Users\\deshpany\\Desktop\\";
 	public static final String PRIVATE_REPORT_DIR = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"reports"+File.separatorChar+"private"+File.separatorChar;
 	public static final String PUBLIC_REPORT_DIR = DashboardConstants.PATH+File.separatorChar+"dashboard"+File.separatorChar+"reports"+File.separatorChar+"public"+File.separatorChar;
@@ -40,8 +40,10 @@ public interface DashboardConstants {
 	public static final String ALL_PAGES = "ALL_PAGES";
 	public static final String HTML = "html";
 	public static final long DEFAULT_REFRESH_INTERVAL_MILLIS = 300000;
-	public static final Integer MAX_CONNECTIONS = 2;
+	public static final Integer MAX_CONNECTIONS = 5;
 	public static final String PUBLIC_USER = "public";
+	public static final String LWR_SCHEDULE_JOB = "LWR_SCHEDULE_JOB";
+	public static final String LWR_SCHEDULE_GROUP = "LWR_SCHEDULE_GROUP";
 	public static enum Destination  {EMAIL,PersonalFolders};
 	public static enum OutputFormat  {HTML,PDF,CSV};
 	public static enum Role {	ADMIN,	VIEW, GUEST, ALL };

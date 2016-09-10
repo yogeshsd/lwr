@@ -55,8 +55,10 @@ public class ConnectionPool {
 					}
 			}else if(connections.isEmpty() && usedConnections< DashboardConstants.MAX_CONNECTIONS){
 				Connection connection = ConnectionFactory.getConnection(alias);
-				usedConnections++;
-				connectionCount.put(alias, usedConnections);
+				if(connection!=null){
+					usedConnections++;
+					connectionCount.put(alias, usedConnections);
+				}
 				return connection;
 			}else
 				return connections.pop();

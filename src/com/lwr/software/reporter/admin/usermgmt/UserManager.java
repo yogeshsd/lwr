@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.TypeFactory;
@@ -18,6 +20,8 @@ public class UserManager {
 	private static volatile UserManager manager;
 	
 	private Set<User> users = new HashSet<User>();
+	
+	private static Logger logger = LogManager.getLogger(UserManager.class);
 	
 	static{
 		File configDir = new File(DashboardConstants.CONFIG_PATH);
@@ -49,7 +53,7 @@ public class UserManager {
 	        users =  objectMapper.readValue(new File(fileName), collectionType);
 	        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(users));
 	    } catch (IOException e) {
-	        e.printStackTrace();
+	    	logger.error("Unable to initialize user manager",e);
 	    }
 		if(users == null || users.isEmpty()){
 			User adminUser = new User("Administrator","admin","admin",Role.ADMIN);
@@ -58,6 +62,7 @@ public class UserManager {
 	}
 	
 	public boolean saveUser(User user){
+		logger.info("Saving user "+user.getUsername());
 		boolean isSaved = false;
 		try{
 			if(user.getUsername().equals(DashboardConstants.ADMIN_USER) && user.getRole().equals(Role.VIEW))
@@ -72,6 +77,7 @@ public class UserManager {
 			}
 			seralize();
 		}catch(Exception e){
+			logger.error("Unable to save user "+user.getUsername(),e);
 			isSaved=false;
 		}
 		return isSaved;
@@ -98,11 +104,12 @@ public class UserManager {
 	        writer.flush();
 	        writer.close();
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("Unable to serialize user manager",e);
 		}
 	}
 
 	public boolean removeUser(String userName) {
+		logger.info("Deleting user "+userName);
 		if(userName.equals(DashboardConstants.ADMIN_USER))
 			return false;
 		User userToDelete = null;

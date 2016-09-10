@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.TypeFactory;
@@ -17,6 +19,8 @@ public class ConnectionManager {
 	private static volatile ConnectionManager manager;
 	
 	private Set<ConnectionParams> connParams = new HashSet<ConnectionParams>();
+	
+	private static Logger logger = LogManager.getLogger(ConnectionManager.class);
 	
 	static{
 		File configDir = new File(DashboardConstants.CONFIG_PATH);
@@ -48,11 +52,12 @@ public class ConnectionManager {
 	        connParams =  objectMapper.readValue(new File(fileName), collectionType);
 	        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(connParams));
 	    } catch (IOException e) {
-	        e.printStackTrace();
+	    	logger.error("Unable to initialize connection manager",e);
 	    }
 	}
 	
 	public boolean saveConnectionParams(ConnectionParams params){
+		logger.info("Saving connection "+params.getAlias());
 		try{
 			if(connParams.contains(params)){
 				connParams.remove(params);
@@ -68,7 +73,7 @@ public class ConnectionManager {
 			serializeConnectionParams();
 			return true;
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("Unable to save connection "+params.getAlias(),e);
 			return false;
 		}
 		
@@ -104,11 +109,12 @@ public class ConnectionManager {
 	        writer.flush();
 	        writer.close();
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error("Unable to seralize connection manager ",e);
 		}
 	}
 
 	public boolean removeConnection(String alias) {
+		logger.info("Deleting connection "+alias);
 		ConnectionParams paramToDelete = null;
 		for (ConnectionParams param : connParams) {
 			if(param.getAlias().equalsIgnoreCase(alias)){

@@ -33,10 +33,13 @@ public class Element {
     
     protected String chartType;
     
+    @JsonIgnore
     protected String position;
     
+    @JsonIgnore
     protected List<Object> header;
     
+    @JsonIgnore
     protected List<List<Object>> data;
     
     @JsonIgnore
@@ -268,8 +271,9 @@ public class Element {
 			dbalias="default";
 		}
 		Connection connection = ConnectionPool.getInstance().getConnection(dbalias);
-		if (connection == null)
-			return;
+		if (connection == null){
+			throw new SQLException("Unable to get connection to alias '"+dbalias+"'");
+		}
 		
 		List<List<Object>> rows = new ArrayList<>();
 		DWHUtility utility = new DWHUtility(connection);
@@ -360,6 +364,7 @@ public class Element {
 		}
 	}
 
+	@JsonIgnore
 	public Set<String> getDimColNames() {
 		Set<String> toReturn = new HashSet<String>();
 		Set<String> dateTimeCols = this.dataTypeToColumnNames.get(DashboardConstants.DATETIME);
@@ -373,6 +378,7 @@ public class Element {
 		return toReturn;
 	}
 
+	@JsonIgnore
 	public Set<String> getMetricColNames() {
 		Set<String> toReturn = new HashSet<String>();
 		Set<String> metricCols = this.dataTypeToColumnNames.get(DashboardConstants.NUMBER);
@@ -389,5 +395,19 @@ public class Element {
 	}
 	
 	public Element(){
+	}
+
+	public Element newInstance() {
+		Element newInstance = new Element();
+		newInstance.id=this.id;
+		newInstance.dbalias=this.dbalias;
+		newInstance.rownumber=this.rownumber;
+		newInstance.column=this.column;
+		newInstance.row=this.row;
+		newInstance.title=this.title;
+		newInstance.query=this.query;
+		newInstance.chartType=this.chartType;
+		newInstance.maxColumn=this.maxColumn;
+		return newInstance;
 	}
 }

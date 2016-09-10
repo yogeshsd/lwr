@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.GET;
@@ -15,41 +16,63 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.TypeFactory;
+import org.json.simple.JSONArray;
 
 import com.lwr.software.reporter.admin.schedmgmt.Schedule;
 import com.lwr.software.reporter.admin.schedmgmt.ScheduleList;
 import com.lwr.software.reporter.admin.schedmgmt.ScheduleManager;
+import com.lwr.software.reporter.admin.schedmgmt.ScheduleRunAudit;
 
 @Path("/schedules/")
 public class ScheduleManagementService {
+	@Path("/instances/{userName}")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ScheduleList getSchedules(){
+	public String getScheduleHistory(@PathParam("userName") String userName){
+		ObjectMapper objectMapper = new ObjectMapper();
+		JSONArray ins = new JSONArray();
+		Map<String, Set<ScheduleRunAudit>> schedules = ScheduleManager.getScheduleManager().getScheduleHistory(userName);
+		
+		if(schedules == null)
+			return ins.toJSONString();
+		
+		Set<String> keys = schedules.keySet();
+		for (String key : keys) {
+			Set<ScheduleRunAudit> instances = schedules.get(key);
+			for (ScheduleRunAudit instance : instances) {
+				 String schedString;
+				try {
+					schedString = objectMapper.writeValueAsString(instance);
+					ins.add(schedString);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return ins.toJSONString();
+	}
+	
+	@Path("/{userName}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public ScheduleList getSchedules(@PathParam("userName") String userName){
 		ScheduleList scheduleList = new ScheduleList();
-		Set<Schedule> schedules = ScheduleManager.getScheduleManager().getSchedules();
+		Set<Schedule> schedules = ScheduleManager.getScheduleManager().getSchedules(userName);
 		scheduleList.setScheduleList(schedules);
 		return scheduleList;
 	}
 
-	@Path("/{param1}")
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public ScheduleList getUser(@PathParam("param1") String scheduleName){
-		ScheduleList scheduleList = new ScheduleList();
-		Schedule schedule = ScheduleManager.getScheduleManager().getSchedule(scheduleName);
-		Set<Schedule> sl = new HashSet<Schedule>();
-		sl.add(schedule);
-		scheduleList.setScheduleList(sl);
-		return scheduleList;
-	}
-
-	@Path("/remove/{param1}")
+	@Path("/remove/{scheduleName}/{userName}")
 	@POST
-	public Response removeUser(@PathParam("param1") String scheduleName){
-		boolean status = ScheduleManager.getScheduleManager().removeSchedule(scheduleName);
+	public Response removeSchedule(			
+			@PathParam("scheduleName") String scheduleName,
+			@PathParam("userName") String userName){
+		boolean status = ScheduleManager.getScheduleManager().removeSchedule(scheduleName,userName);
 		if(status)
 			return Response.ok("Schedule '"+scheduleName+"' Deleted.").build();
 		else
@@ -58,17 +81,18 @@ public class ScheduleManagementService {
 	
 	@Path("/save")
 	@POST
-	public Response updateSchedule(@QueryParam("schedules") String schedules){
+	public Response updateSchedule(@QueryParam("schedules") String scheduleJson,
+			@QueryParam("userName") String userName){
     	ObjectMapper objectMapper = new ObjectMapper();
     	objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm"));
     	TypeFactory typeFactory = objectMapper.getTypeFactory();
     	CollectionType collectionType = typeFactory.constructCollectionType(Set.class, Schedule.class);
     	try {
-			Set<Schedule> scheds =  objectMapper.readValue(schedules, collectionType);
+			Set<Schedule> scheds =  objectMapper.readValue(scheduleJson, collectionType);
 			Iterator<Schedule> iterator = scheds.iterator();
 			while(iterator.hasNext()){
 				Schedule schedule = iterator.next();
-				boolean status = ScheduleManager.getScheduleManager().saveSchedule(schedule);
+				boolean status = ScheduleManager.getScheduleManager().saveSchedule(schedule,userName);
 				if(status)
 					return Response.ok("Schedule '"+schedule.getScheduleName()+"' Saved.").build();
 				else
